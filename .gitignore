@@ -13,7 +13,7 @@ dist/
 build/
 
 # Python cache
-__pycache__/
+__pycache__/*6
 *.py[cod]
 .pytest_cache/
 
