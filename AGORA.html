@@ -19,6 +19,13 @@
 .tryon-board-empty{position:absolute;left:8%;right:8%;bottom:12px;text-align:center;font-size:12px;color:#76695e;z-index:8}
 .tryon-clear-row{display:flex;justify-content:center;margin-top:12px}
 .tryon-empty{color:var(--muted);text-align:center;font-size:14px;padding:18px}
+.ai-model-lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,260px);gap:18px;align-items:center;margin:18px 0;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--paper,#fff)}
+.ai-model-lab h2{font-size:18px;margin:0 0 8px}.ai-model-lab p{font-size:13px;line-height:1.55;color:var(--muted)}
+.ai-model-preview{min-height:190px;border:1px dashed var(--line);border-radius:12px;display:grid;place-items:center;overflow:hidden;background:#f7f3ed;color:var(--muted);font-size:12px;text-align:center;padding:10px}
+.ai-model-preview img{display:block;max-width:100%;max-height:300px;object-fit:contain;border-radius:8px}
+.ai-tryon-controls{grid-column:1/-1;border-top:1px solid var(--line);padding-top:14px;display:grid;gap:9px}.ai-tryon-result{min-height:80px;border:1px dashed var(--line);border-radius:12px;padding:12px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:13px}.ai-tryon-result img{display:block;max-width:100%;max-height:640px;object-fit:contain;border-radius:10px}.ai-tryon-result a{color:var(--terracotta);text-decoration:underline}.ai-model-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.ai-model-prompt{padding:10px 12px;background:var(--clay-soft);border-radius:10px;color:var(--ink);font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+@media(max-width:700px){.ai-model-lab{grid-template-columns:1fr}}
+
 .calendar-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .calendar-head h2{font-size:24px;margin-right:auto}
 .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
@@ -29,6 +36,14 @@
 .calendar-day.selected{background:var(--clay-soft);border-color:var(--terracotta)}
 .calendar-day b{font-size:13px;font-weight:500}
 .calendar-event-dot{font-size:10px;line-height:1.2;color:var(--terracotta);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.calendar-outfit{border:1px solid var(--terracotta);background:var(--clay-soft);border-radius:14px;padding:14px;margin-bottom:14px;display:grid;gap:12px}
+.calendar-outfit-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.calendar-outfit-head h3{font-size:19px;margin-top:3px}
+.calendar-outfit-pieces{display:flex;gap:8px;flex-wrap:wrap}
+.calendar-outfit-piece{display:flex;align-items:center;gap:7px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:5px 8px;font-size:12px}
+.calendar-outfit-piece .th{width:38px;height:38px;display:grid;place-items:center;overflow:hidden;border-radius:7px;background:var(--linen);flex:none}
+.calendar-outfit-piece .th img{width:100%;height:100%;object-fit:contain}
+
 @media(max-width:700px){.tryon-layout{grid-template-columns:1fr}.tryon-board{height:500px}.calendar-day{min-height:58px;padding:5px}.calendar-event-dot{display:none}}
 
 
@@ -465,6 +480,32 @@
         <div class="pagehead">
             <div><div class="eyebrow">Wardrobe preview</div><h1>2D <em>Try-On</em></h1><p>Choose your own clothes and preview them on a front-facing 2D mannequin.</p></div>
         </div>
+        <section class="ai-model-lab" aria-labelledby="ai-model-title">
+            <div>
+                <div class="eyebrow">Stage 2 · external AI workflow</div>
+                <h2 id="ai-model-title">Your AI-generated model</h2>
+                <p>Save one full-body base model image, then select clothes from your closet and ask Gemini to create an edited outfit image while keeping the same model as consistent as possible.</p>
+                <div class="ai-model-prompt" id="ai-model-prompt">Create a realistic, full-body fashion model standing straight and facing forward, wearing a plain fitted neutral outfit, arms slightly away from the torso, full body visible from head to feet, simple light background, natural proportions, no text, no accessories. Use the person's preferred presentation. This is a visual reference, not an exact body scan.</div>
+                <p class="tryon-note">Workflow C: the base model is reused for every outfit edit. Gemini receives the saved model image and the selected clothing photos for each generation. Image generation is a paid API feature; the text prompt helper below is optional.</p>
+                <label class="tryon-note" style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" id="ai-model-consent" style="margin-top:2px"> I agree to send my model preference, saved model image and selected clothing photos to Google Gemini for image generation and editing. My body measurements are not sent.</label>
+                <div class="ai-model-actions">
+                    <button class="btn terra small" type="button" id="ai-model-generate-image">Generate base model with Gemini</button>
+                    <button class="btn ghost small" type="button" id="ai-model-generate-prompt">Generate prompt with Gemini</button>
+                    <button class="btn ghost small" type="button" id="ai-model-copy-prompt">Copy prompt</button>
+                    <button class="btn terra small" type="button" id="ai-model-upload">Upload generated image</button>
+                    <button class="btn ghost small" type="button" id="ai-model-remove" hidden>Remove image</button>
+                    <input id="ai-model-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+                </div>
+                <p class="tryon-note" id="ai-model-status" role="status" aria-live="polite">Upload your base model image once. To enable AI outfit editing, add a Gemini API key as a Supabase secret and deploy the gemini-virtual-tryon Edge Function. Gemini image generation requires billing.</p>
+                <p class="tryon-note">Do not upload someone else's photo without permission. Your uploaded model image is saved with your AGORA account when cloud sync is available.</p>
+            </div>
+            <div class="ai-model-preview" id="ai-model-preview">No AI model image uploaded yet</div>
+            <div class="ai-tryon-controls">
+                <button class="btn terra small" type="button" id="ai-tryon-generate">Generate AI outfit image</button>
+                <p class="tryon-note" id="ai-tryon-status" role="status" aria-live="polite">Upload a base model image and select at least one clothing item to begin.</p>
+                <div id="ai-tryon-result" class="ai-tryon-result">Your generated outfit image will appear here.</div>
+            </div>
+        </section>
         <div class="tryon-layout">
             <div class="tryon-picker">
                 <h2>Your uploaded clothes</h2>
@@ -1217,9 +1258,35 @@
     }
     async function wear(i,ctx){
         const o=S.shown[i],u=S.user,secs=Math.round((Date.now()-S.decisionStart)/1000);
+        const outfitItems=[o.inner,o.top,o.bottom,o.dress,o.outer,o.shoes,o.waist,...(o.acc||[])].filter(Boolean);
+        const itemIds=outfitItems.map(x=>x.id);
+        const outfitName=outfitItems.map(x=>x.name).join(" + ")||"Recommended outfit";
         u.history=u.history||[];
-        u.history.unshift({id:uid(),date:ctx.iso,ts:Date.now(),occ:S.occ==="day"?"calendar":S.occ,vibe:S.vibe,key:o.key,items:[o.inner,o.top,o.bottom,o.dress,o.outer,o.shoes,o.waist,...(o.acc||[])].filter(Boolean).map(x=>x.id),feels:Math.round(ctx.feels*10)/10,rain:ctx.rain,score:Math.round(o.score),decisionSec:secs,feedback:null});
-        await save();toast(`Logged. You decided in ${Math.floor(secs/60)}:${pad(secs%60)}. Your outfit is saved to your account.`);S.decisionStart=Date.now();renderLooks(ctx,true);
+        u.history.unshift({id:uid(),date:ctx.iso,ts:Date.now(),occ:S.occ==="day"?"calendar":S.occ,vibe:S.vibe,key:o.key,items:itemIds,feels:Math.round(ctx.feels*10)/10,rain:ctx.rain,score:Math.round(o.score),decisionSec:secs,feedback:null});
+
+        // Save the chosen Today recommendation as the outfit planned for this date.
+        // Keep ordinary calendar events, but replace any previous outfit selection for this date.
+        u.schedule=u.schedule||{};
+        const dayPlans=u.schedule[ctx.iso]||[];
+        u.schedule[ctx.iso]=dayPlans.filter(e=>e.kind!=="outfit");
+        u.schedule[ctx.iso].push({
+            id:uid(),
+            kind:"outfit",
+            title:"Wear this look",
+            outfitName,
+            start:"00:00",
+            end:"23:59",
+            occ:S.occ==="day"?"calendar":(S.occ||"cafe"),
+            items:itemIds,
+            score:Math.round(o.score),
+            vibe:S.vibe,
+            savedAt:Date.now()
+        });
+
+        await save();
+        toast(`Outfit saved to your Calendar for ${dayLabel(ctx.iso)}.`);
+        S.decisionStart=Date.now();
+        renderLooks(ctx,true);
     }
     setInterval(()=>{const el=$("#timer");if(el){const s=Math.round((Date.now()-S.decisionStart)/1000);el.textContent=`Deciding ${Math.floor(s/60)}:${pad(s%60)}`}},1000);
 
@@ -1234,6 +1301,157 @@
     }
     function renderTryOn(){
         const items=wardrobeItems(),picker=$("#tryon-items"),preview=$("#tryon-preview");
+        const modelPreview=$("#ai-model-preview"),modelFile=$("#ai-model-file"),modelUpload=$("#ai-model-upload"),modelRemove=$("#ai-model-remove");
+        if(modelPreview){
+            modelPreview.innerHTML=S.user?.modelImage?`<img src="${S.user.modelImage}" alt="Your uploaded AI-generated model reference">`:'No AI model image uploaded yet';
+            if(modelRemove)modelRemove.hidden=!S.user?.modelImage;
+        }
+        if(modelUpload&&modelFile&&!modelUpload.dataset.bound){
+            modelUpload.dataset.bound='1';
+            modelUpload.onclick=()=>modelFile.click();
+            modelFile.onchange=async()=>{
+                const file=modelFile.files&&modelFile.files[0];if(!file)return;
+                if(!/^image\/(png|jpeg|webp)$/.test(file.type)){toast('Please choose a PNG, JPG, or WebP image.');modelFile.value='';return;}
+                if(file.size>8*1024*1024){toast('Please choose an image smaller than 8 MB.');modelFile.value='';return;}
+                const reader=new FileReader();
+                reader.onload=async()=>{
+                    S.user.modelImage=String(reader.result);
+                    await save();
+                    renderTryOn();
+                    toast('AI model image saved.');
+                };
+                reader.onerror=()=>toast('Could not read that image. Please try another file.');
+                reader.readAsDataURL(file);
+            };
+        }
+        if(modelRemove&&!modelRemove.dataset.bound){
+            modelRemove.dataset.bound='1';
+            modelRemove.onclick=async()=>{
+                if(S.user){S.user.modelImage=null;S.user._cloudModelImagePath=null;await save();renderTryOn();toast('AI model image removed.');}
+            };
+        }
+        const geminiPromptButton=$("#ai-model-generate-prompt"),copyPromptButton=$("#ai-model-copy-prompt"),promptBox=$("#ai-model-prompt"),consentBox=$("#ai-model-consent"),modelStatus=$("#ai-model-status");
+        const geminiBaseModelButton=$("#ai-model-generate-image");
+        if(geminiBaseModelButton&&!geminiBaseModelButton.dataset.bound){
+            geminiBaseModelButton.dataset.bound='1';
+            geminiBaseModelButton.onclick=async()=>{
+                if(!S.user?._cloudUid){toast('Please sign in to AGORA first.');return;}
+                if(!consentBox?.checked){toast('Please agree before sending your model preference to Google Gemini.');return;}
+                geminiBaseModelButton.disabled=true;
+                if(modelStatus)modelStatus.textContent='Gemini is creating your base model image…';
+                try{
+                    const {data,error}=await sb.functions.invoke('gemini-virtual-tryon',{body:{mode:'generate-model',gender:S.user.gender||'female'}});
+                    if(error)throw error;
+                    if(!data?.resultPath||!data?.resultUrl)throw new Error(data?.error||'Gemini did not return a base model image.');
+                    S.user.modelImage=data.resultUrl;
+                    S.user._cloudModelImagePath=data.resultPath;
+                    await save();
+                    renderTryOn();
+                    if(modelStatus)modelStatus.textContent='Your base model is saved. AGORA will reuse it for every outfit edit.';
+                    toast('Base model generated and saved.');
+                }catch(err){
+                    console.error('Gemini base model generation failed:',err);
+                    const message=err?.message||String(err);
+                    if(modelStatus)modelStatus.textContent='Base model generation failed: '+message+'. Check your Gemini key, billing, and Edge Function deployment.';
+                    toast('Could not generate the base model. Check the status message.');
+                }finally{geminiBaseModelButton.disabled=false;}
+            };
+        }
+        if(geminiPromptButton&&!geminiPromptButton.dataset.bound){
+            geminiPromptButton.dataset.bound='1';
+            geminiPromptButton.onclick=async()=>{
+                if(!consentBox?.checked){toast('Please confirm before sending your profile details to Google Gemini.');return;}
+                if(!S.user){toast('Please log in first.');return;}
+                geminiPromptButton.disabled=true;
+                if(modelStatus)modelStatus.textContent='Generating your personalized prompt with Gemini…';
+                try{
+                    const {data,error}=await sb.functions.invoke('generate-model-prompt',{body:{gender:S.user.gender||'female'}});
+                    if(error)throw error;
+                    if(!data?.prompt)throw new Error(data?.error||'Gemini did not return a prompt.');
+                    promptBox.textContent=data.prompt;
+                    if(modelStatus)modelStatus.textContent='Prompt generated. Copy it and use it in an image generator. Gemini has not generated an image.';
+                    toast('Gemini image prompt generated.');
+                }catch(err){
+                    console.error('Gemini prompt generation failed:',err);
+                    const message=err?.message||String(err);
+                    if(modelStatus)modelStatus.textContent='Gemini is not connected yet or the request failed: '+message+'. Check the setup instructions included with this project.';
+                    toast('Gemini prompt generation failed. Check setup instructions.');
+                }finally{geminiPromptButton.disabled=false;}
+            };
+        }
+        if(copyPromptButton&&!copyPromptButton.dataset.bound){
+            copyPromptButton.dataset.bound='1';
+            copyPromptButton.onclick=async()=>{
+                const textToCopy=promptBox?.textContent?.trim()||'';
+                if(!textToCopy){toast('There is no prompt to copy.');return;}
+                try{
+                    if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(textToCopy);
+                    else{const area=document.createElement('textarea');area.value=textToCopy;area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();const ok=document.execCommand('copy');area.remove();if(!ok)throw new Error('Clipboard is unavailable');}
+                    toast('Prompt copied.');
+                }catch(err){toast('Could not copy automatically. Please select and copy the prompt.');}
+            };
+        }
+        const aiTryOnButton=$("#ai-tryon-generate"),aiTryOnStatus=$("#ai-tryon-status"),aiTryOnResult=$("#ai-tryon-result");
+        if(aiTryOnResult){
+            const latest=(S.user?.tryOnResults||[]).slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))[0];
+            aiTryOnResult.innerHTML=latest?.url
+                ?`<img src="${esc(latest.url)}" alt="AI-generated outfit preview"><p>${esc((latest.garments||[]).join(', '))}</p><a href="${esc(latest.url)}" target="_blank" rel="noopener">Open generated image</a>`
+                :'Your generated outfit image will appear here.';
+        }
+        if(aiTryOnButton&&!aiTryOnButton.dataset.bound){
+            aiTryOnButton.dataset.bound='1';
+            aiTryOnButton.onclick=async()=>{
+                if(!S.user){toast('Please log in first.');return;}
+                if(!S.user._cloudUid){toast('Please sign in with your AGORA account before generating an AI outfit.');return;}
+                if(!S.user.modelImage){toast('Upload your base model image first.');return;}
+                if(!consentBox?.checked){toast('Please agree before sending your photos to Google Gemini.');return;}
+                const selected=[];
+                const dressItem=items.find(x=>x.id===tryonSelected.dress);
+                if(dressItem)selected.push(dressItem);
+                else{
+                    for(const role of ['top','bottom']){
+                        const item=items.find(x=>x.id===tryonSelected[role]);
+                        if(item)selected.push(item);
+                    }
+                }
+                for(const role of ['outer','shoes']){
+                    const item=items.find(x=>x.id===tryonSelected[role]);
+                    if(item)selected.push(item);
+                }
+                for(const id of tryonSelected.acc){const item=items.find(x=>x.id===id);if(item)selected.push(item);}
+                if(!selected.length){toast('Select at least one clothing item first.');return;}
+                if(selected.length>6){toast('Please select no more than 6 clothing items for one generation.');return;}
+                aiTryOnButton.disabled=true;
+                if(aiTryOnStatus)aiTryOnStatus.textContent='Preparing your saved model and clothing photos…';
+                try{
+                    // Ensure local data URLs are uploaded first so the Edge Function can read private Storage objects.
+                    await save();
+                    const modelImagePath=S.user._cloudModelImagePath;
+                    const garments=selected.map(item=>({
+                        name:item.name||'Clothing item',
+                        category:T(item).label||T(item).cat||'Clothing',
+                        imagePath:item._cloudImagePath
+                    }));
+                    if(!modelImagePath||garments.some(g=>!g.imagePath))throw new Error('Some photos have not synced to your AGORA cloud storage yet. Please try Save again.');
+                    if(aiTryOnStatus)aiTryOnStatus.textContent='Gemini is editing your outfit. This may take a little while…';
+                    const {data,error}=await sb.functions.invoke('gemini-virtual-tryon',{body:{modelImagePath,garments}});
+                    if(error)throw error;
+                    if(!data?.resultPath||!data?.resultUrl)throw new Error(data?.error||'Gemini did not return a generated image.');
+                    S.user.tryOnResults=S.user.tryOnResults||[];
+                    S.user.tryOnResults.unshift({id:uid(),path:data.resultPath,url:data.resultUrl,createdAt:Date.now(),garments:selected.map(x=>x.name||'Clothing item')});
+                    S.user.tryOnResults=S.user.tryOnResults.slice(0,10);
+                    await save();
+                    if(aiTryOnStatus)aiTryOnStatus.textContent='Your AI outfit image is ready. The original base model remains saved for your next outfit.';
+                    renderTryOn();
+                    toast('AI outfit image generated and saved.');
+                }catch(err){
+                    console.error('Gemini virtual try-on failed:',err);
+                    const message=err?.message||String(err);
+                    if(aiTryOnStatus)aiTryOnStatus.textContent='AI try-on failed: '+message+'. Check your Gemini key, billing, Edge Function deployment, and Storage permissions.';
+                    toast('AI try-on failed. Check the status message.');
+                }finally{aiTryOnButton.disabled=false;}
+            };
+        }
         if(!items.length){
             picker.innerHTML=`<div class="empty"><h3>No clothing photos yet</h3><p>Upload your own clothing photos in Closet first. Your uploaded photos will appear here.</p><button class="btn terra" id="tryon-add">+ Upload clothing</button></div>`;
             const add=$("#tryon-add");if(add)add.onclick=()=>openAddSheet();
@@ -1468,12 +1686,29 @@
         $("#calendar-grid").innerHTML=heads.map(x=>`<div class="calendar-dow">${x}</div>`).join("")+days.map(d=>{
             const evs=(S.user.schedule[d]||[]).slice().sort((a,b)=>a.start.localeCompare(b.start));
             const dt=parseISO(d),outside=dt.getMonth()!==m;
-            return `<button type="button" class="calendar-day ${outside?'outside':''} ${d===todayISO()?'today':''} ${d===calendarSelected?'selected':''}" data-caldate="${d}"><b>${dt.getDate()}</b>${evs.slice(0,2).map(e=>`<span class="calendar-event-dot">${esc(e.start)} ${esc(e.title)}</span>`).join('')}${evs.length>2?`<span class="calendar-event-dot">+${evs.length-2} more</span>`:''}</button>`;
+            return `<button type="button" class="calendar-day ${outside?'outside':''} ${d===todayISO()?'today':''} ${d===calendarSelected?'selected':''}" data-caldate="${d}"><b>${dt.getDate()}</b>${evs.filter(e=>e.kind==="outfit").slice(0,1).map(e=>`<span class="calendar-event-dot">👗 Outfit saved</span>`).join('')}${evs.filter(e=>e.kind!=="outfit").slice(0,2).map(e=>`<span class="calendar-event-dot">${esc(e.start)} ${esc(e.title)}</span>`).join('')}${evs.filter(e=>e.kind!=="outfit").length>2?`<span class="calendar-event-dot">+${evs.filter(e=>e.kind!=="outfit").length-2} more</span>`:''}</button>`;
         }).join("");
         for(const b of $$("[data-caldate]"))b.onclick=()=>{calendarSelected=b.dataset.caldate;renderCalendar()};
         const selected=parseISO(calendarSelected);$("#cal-day-title").textContent=selected.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});
-        const events=(S.user.schedule[calendarSelected]||[]).slice().sort((a,b)=>a.start.localeCompare(b.start));
-        $("#cal-events").innerHTML=events.length?`<ul class="sched">${events.map(e=>`<li><b class="num">${esc(e.start)}–${esc(e.end)}</b><span>${esc(e.title)}</span><span class="tag">${esc((OCC[e.occ]||OCC.cafe).label)}</span></li>`).join('')}</ul>`:`<p class="note">No plans saved for this day. Add plans from the Week page.</p>`;
+        const events=(S.user.schedule[calendarSelected]||[]).slice().sort((a,b)=>(a.start||"").localeCompare(b.start||""));
+        const outfitEvent=events.find(e=>e.kind==="outfit");
+        const regularEvents=events.filter(e=>e.kind!=="outfit");
+        const itemById=Object.fromEntries((S.user.items||[]).map(it=>[String(it.id),it]));
+        const outfitPieces=outfitEvent?(outfitEvent.items||[]).map(id=>itemById[String(id)]).filter(Boolean):[];
+        const outfitMarkup=outfitEvent?`<div class="calendar-outfit">
+            <div class="calendar-outfit-head"><div><div class="eyebrow">Planned outfit</div><h3>${esc(outfitEvent.outfitName||outfitEvent.title||"Wear this look")}</h3></div><span class="tag">${outfitEvent.score?esc(outfitEvent.score+" fit"):"Saved from Today"}</span></div>
+            ${outfitPieces.length?`<div class="calendar-outfit-pieces">${outfitPieces.map(it=>`<div class="calendar-outfit-piece"><span class="th">${thumb(it)}</span><span>${esc(it.name)}</span></div>`).join("")}</div>`:`<p class="note">This outfit is saved, but one or more wardrobe items are no longer available.</p>`}
+            <button class="btn ghost small" id="cal-remove-outfit" type="button">Remove planned outfit</button>
+        </div>`:"";
+        const eventsMarkup=regularEvents.length?`<ul class="sched">${regularEvents.map(e=>`<li><b class="num">${esc(e.start||"")}–${esc(e.end||"")}</b><span>${esc(e.title)}</span><span class="tag">${esc((OCC[e.occ]||OCC.cafe).label)}</span></li>`).join('')}</ul>`:"";
+        $("#cal-events").innerHTML=(outfitMarkup||eventsMarkup)?outfitMarkup+eventsMarkup:`<p class="note">No plans or outfits saved for this day. Choose “Wear this look” on Today to add an outfit here.</p>`;
+        const removeOutfit=$("#cal-remove-outfit");
+        if(removeOutfit)removeOutfit.onclick=async()=>{
+            S.user.schedule[calendarSelected]=(S.user.schedule[calendarSelected]||[]).filter(e=>e.kind!=="outfit");
+            await save();
+            toast("Planned outfit removed from Calendar.");
+            renderCalendar();
+        };
         $("#cal-open-today").onclick=()=>{S.date=calendarSelected;location.hash="today"};
         $("#cal-prev").onclick=()=>{calendarMonth=new Date(y,m-1,1);renderCalendar()};
         $("#cal-next").onclick=()=>{calendarMonth=new Date(y,m+1,1);renderCalendar()};
@@ -1549,10 +1784,19 @@
     async function cloudSave(user){
         const uid=user._cloudUid;
 
+        let modelImagePath=user._cloudModelImagePath||null;
+        if(user.modelImage&&user.modelImage.startsWith("data:")){
+            modelImagePath=`${uid}/model/model-reference`;
+            await uploadCloudPhoto(user.modelImage,modelImagePath);
+            user._cloudModelImagePath=modelImagePath;
+        }
+
         const profileData={
             schedule:user.schedule||{},
             history:user.history||[],
-            prefs:user.prefs||{}
+            prefs:user.prefs||{},
+            modelImagePath,
+            tryOnResults:(user.tryOnResults||[]).map(r=>({id:r.id,path:r.path,createdAt:r.createdAt,garments:r.garments||[]}))
         };
 
         const {error:profileError}=await sb.from("profiles").upsert({
@@ -1750,6 +1994,10 @@
         }
 
         const data=(profile&&profile.user_data)||{};
+        const modelImage=data.modelImagePath?await signedPhoto(data.modelImagePath):null;
+        const tryOnResults=await Promise.all((data.tryOnResults||[]).map(async r=>{
+            try{return {...r,url:await signedPhoto(r.path)}}catch(err){console.warn('Could not restore saved AI try-on image',err);return {...r,url:null}}
+        }));
 
         const user={
             username,
@@ -1775,6 +2023,9 @@
             schedule:data.schedule||legacy?.schedule||{},
             history:data.history||legacy?.history||[],
             prefs:data.prefs||legacy?.prefs||{},
+            modelImage,
+            tryOnResults,
+            _cloudModelImagePath:data.modelImagePath||null,
 
             created:authUser.created_at
                 ?new Date(authUser.created_at).getTime()
@@ -1990,7 +2241,8 @@
                 const profileData={
                     schedule:S.user.schedule||{},
                     history:S.user.history||[],
-                    prefs:S.user.prefs||{}
+                    prefs:S.user.prefs||{},
+                    modelImagePath:S.user._cloudModelImagePath||null
                 };
 
                 const {error}=await sb.from("profiles").upsert({
