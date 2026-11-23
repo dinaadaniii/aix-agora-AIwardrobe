@@ -1,152 +1,91 @@
-# aix-agora-AIwardrobe
-
 # AGORA
 
-**AGORA** is a wardrobe and daily outfit recommendation web application.
-It helps users organise their clothing, receive outfit suggestions based
-on the day's weather and schedule, and plan what to wear.
+**AGORA** is a wardrobe and daily outfit app. You photograph your clothes once, and AGORA suggests what to wear based on the day's weather, your schedule and the occasion, using only pieces you own.
 
-> **Current project scope:** This version does not include AI model
-> generation or AI image-based virtual try-on. The Try-On page is a 2D
-> mannequin preview that uses clothing photos uploaded by the user.
+> **Current phase: frontend.** There is no login and no cloud sync. Everything is saved in your browser (IndexedDB). Use **Account → Export backup** to keep a copy. Supabase login and the Gemini AI try-on are switched off in `js/config.js` until the backend phase.
 
-## 1. Main features
+Live site: deployed on Vercel from the `main` branch.
 
--   **Today** -- Shows the selected day's weather information and
-    recommends outfits using the user's wardrobe, weather conditions,
-    schedule, and selected occasion or style.
--   **Closet** -- Lets users upload, edit, organise, and remove clothing
-    items. AGORA processes clothing photos to identify colours and
-    prepare previews.
--   **Week** -- Supports weekly planning and importing calendar events
-    from an `.ics` calendar file.
--   **Calendar** -- Displays the user's saved schedule by month and lets
-    the user select a date to view that day's events.
--   **2D Try-On** -- Lets users select uploaded clothing items and
-    preview a combination on a 2D mannequin.
--   **Wear history / feedback** -- Records looks marked as worn and
-    allows users to give feedback, helping them review their outfit
-    choices.
+## Features
 
-Weather information in this version is generated from an in-app Gyeonggi
-climate-based dataset. It should be treated as an estimate for the
-recommendation experience, not as a live weather forecast.
+- **Today**: weather for the selected day and city, your plans, and three recommended looks on a mannequin or as a flat lay. Tap a piece to swap it; *Wear this look* saves the outfit to that day's calendar.
+- **Closet**: upload one or many photos. AGORA removes the background and reads the main colour in the browser.
+- **Week**: add plans or import an `.ics` calendar file; each day shows its best look.
+- **Calendar**: month view with plans and saved outfits.
+- **2D Try-On**: dress a front-facing mannequin with your own clothing photos.
+- **Account**: rename your profile, export or import a JSON backup, or delete all data.
 
-## 2. Technologies
+Weather currently comes from a built-in Gyeonggi climate model, not a live forecast. Live weather (Open-Meteo) is planned for the next milestone.
 
-  -----------------------------------------------------------------------
-Technology                          Purpose
-  ----------------------------------- -----------------------------------
-HTML                                Application structure
+## Run it locally
 
-CSS                                 Layout, styling, and responsive
-design
-
-JavaScript                          Navigation, outfit recommendation
-logic, wardrobe handling, and
-interactions
-
-Supabase Auth                       User registration and login
-
-Supabase Database                   User profiles, wardrobe records,
-and user data
-
-Supabase Storage                    Uploaded clothing photos and
-processed image files
-
-IndexedDB / browser storage         Local browser-side data storage
-
-Supabase JavaScript client (CDN)    Connects the web page to Supabase
------------------------------------------------------------------------
-
-The current application is primarily a **single-page HTML application**.
-The main application is contained in `AGORA.html`; it does not require a
-separate Node.js frontend build.
-
-## 3. Project files
-
-The minimum file needed to open the application is:
-
-``` text
-AGORA/
-└── AGORA.html
-```
-
-If your team repository includes additional SQL setup files,
-screenshots, or documentation, keep them in the repository and follow
-the instructions supplied with those files. The HTML file alone does not
-create the Supabase database tables or Storage bucket.
-
-You can use IntelliJ IDEA or another code editor to view and edit
-`AGORA.html`.
-
-## 4. How to run the project locally
-
-Follow these steps to run the AGORA website on your computer.
-
-### 1. Download the Project
-
-Clone the repository using Git:
+You need Python 3 and a modern browser (Chrome recommended). From the project folder:
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
-```
-
-Alternatively, download the repository as a ZIP file from GitHub and extract it.
-
-### Step 2 -- Open the project folder
-
-Open that folder in IntelliJ IDEA (or your preferred editor).
-
-### Step 3 -- Start a local web server
-
-Open the terminal in the folder containing `AGORA.html`.
-
-**Windows:**
-
-``` bash
+# Windows
 py -m http.server 8000
-```
-
-If the `py` command is unavailable, try:
-
-``` bash
-python -m http.server 8000
-```
-
-**macOS / Linux:**
-
-``` bash
+# macOS / Linux
 python3 -m http.server 8000
 ```
 
-Wait until the terminal displays a message indicating that the server is running.
+Then open <http://localhost:8000>. Keep the terminal open while you use the app and press `Ctrl + C` to stop. Don't open `index.html` by double-clicking: browsers block some features on `file://` pages.
 
-### Step 4 -- Open AGORA in your browser
+## Project structure
 
-Open your web browser (Google Chrome recommended) and enter:
-
-```text
-http://localhost:8000/AGORA.html
-```
-
-The AGORA website should now be accessible locally.
-
-Keep the terminal window running while you use the application. 
-
-### 5. Stop the Local Server
-
-When you finish using the website, return to the Terminal and press:
+No build step: plain HTML, CSS and JavaScript files, loaded in order by `index.html`.
 
 ```text
-Ctrl + C
+index.html               app shell and page markup
+vercel.json              Vercel settings (clean URLs, old /AGORA.html link redirects to /)
+favicon.svg
+css/
+  base.css               browser reset
+  features.css           try-on, calendar and account sheet styles
+  agora.css              main design: colours, type, layout
+js/
+  config.js              feature flags (SUPABASE_ENABLED, AI_TRYON_ENABLED)
+  core/utils.js          DOM helpers, dates, colour maths
+  engine/weather.js      climate-based weather model
+  engine/catalogue.js    garment types, occasions, style vibes
+  engine/score.js        recommendation context and outfit scoring
+  render/mannequin.js    mannequin and garment drawing
+  data/db.js             IndexedDB storage
+  data/sample-closet.js  sample items (not used in the UI yet)
+  data/local-profile.js  no-login profile, backup export/import
+  app/state.js           app state, saving, view switching
+  views/                 today, tryon, closet, plan (week + calendar), insights
+  cloud/supabase.js      Supabase login and cloud sync (off for now)
+  main.js                routing and startup
+archive/                 earlier single-file versions, for reference
 ```
 
-This will stop the local server.
+The scripts share one global scope and must load in the order listed in `index.html`. Turning them into ES modules is planned for a later milestone.
 
-## Important Notes
+## Configuration
 
-- Python 3 must be installed on your computer.
-- Keep the Terminal running while using the website.
-- Do not rely on opening the HTML file by double-clicking it.
-- Do not open `AGORA.html` directly by double-clicking it. Use the local server instead.
+`js/config.js`:
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `SUPABASE_ENABLED` | `false` | `true` loads Supabase and requires login; wardrobe syncs to the cloud. |
+| `AI_TRYON_ENABLED` | `false` | Shows the Gemini AI model lab on the Try-On page (needs Supabase and the `gemini-virtual-tryon` Edge Function). |
+
+Only the Supabase **publishable** key belongs in this file. Never commit a service-role key or any other secret.
+
+## Deploy
+
+The repository is connected to Vercel. Pushing to `main` deploys production; pushing any other branch creates a preview URL. There is no build command and the output directory is the repository root.
+
+## Roadmap
+
+1. **M0 Foundation**: merge the latest versions, split into files, deploy (this version)
+2. **M1 Mobile shell and Today**: bottom tab bar, Today hero card, live weather, onboarding, sample closet with photos
+3. **M2 Closet and Plan**: category tiles, outfit builder, month planning
+4. **M3 Stats and smarter picks**: cost per wear, wardrobe stats, rotation, feedback learning
+5. **M4 Polish**: installable PWA, Keep/Bye review, accessibility
+6. **Later**: Supabase login and sync, Gemini AI try-on
+
+## Team
+
+- Nur Dina Adani: original app, 2D try-on, Supabase and Gemini prototypes
+- Imran: frontend development from M0
