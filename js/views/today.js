@@ -26,7 +26,7 @@ ${ctx.eveNeeded?`<div class="alert cold">${ICON.cold}<div><b>Colder tonight.</b>
 ${ctx.rain||wx.rainP>=.5?`<div class="alert rain">${ICON.rain}<div><b>${wx.rains?`${wx.cond==="Snow"?"Snow":"Rain"} from ${pad(wx.rainStart)}:00 to ${pad(Math.min(24,wx.rainEnd))}:00.`:`${Math.round(wx.rainP*100)}% chance of rain.`}</b> ${ctx.rain?"Umbrella is part of every look; suede is scored down.":"It falls outside your plans, but pack an umbrella to be safe."}</div></div>`:""}
 <div class="src">${weatherSourceNote(wx)}</div>`;
     $("#citysel").onchange=async e=>{u.city=e.target.value;await save();S.seen.clear();render()};
-    for(const b of $$(".day",$("#wxcard")))b.onclick=()=>{S.date=b.dataset.d;S.seen.clear();S.occ=null;S.openSwap=null;S.decisionStart=Date.now();render()};
+    for(const b of $$(".day",$("#wxcard")))b.onclick=()=>{S.date=b.dataset.d;S.seen.clear();S.occ=null;S.openSwap=null;S.decisionStart=Date.now();S.flow="hello";closeDrawer();render()};
     // schedule
     $("#schedcard").innerHTML=`<div class="wx-top"><span class="eyebrow">Calendar · ${esc(dayLabel(iso))}</span><a class="linkbtn" href="#week">Edit plans</a></div>
 ${evs.length?`<ul>${evs.slice().sort((a,b)=>a.start.localeCompare(b.start)).map(e=>`<li><time>${e.start}</time><span>${esc(e.title)}</span><span class="tag">${esc((OCC[e.occ]||OCC.cafe).label)}</span></li>`).join("")}</ul>`:`<p style="margin:8px 0 0;font-size:14px;color:var(--muted)">No plans on this day. Pick an occasion, or add plans on the Week page.</p>`}`;
@@ -38,14 +38,16 @@ ${evs.length?`<ul>${evs.slice().sort((a,b)=>a.start.localeCompare(b.start)).map(
     $("#mctx").innerHTML=`<button type="button" class="mwx" id="mwx" aria-label="Weather details for ${esc(dayLabel(iso))}"><b class="num">${Math.round(cur.t)}°</b><span>${esc(iso===todayISO()?"Now":"Noon")} · ${esc(wx.cond)} · H ${Math.round(wx.tmax)}° L ${Math.round(wx.tmin)}° · ${esc(wx.city)}${ctx.rain?" · umbrella":""}</span><span class="mwx-more">${esc(dayLabel(iso))} ▾</span></button>
 <div class="chips mocc" role="group" aria-label="Occasion">${occChips}</div>`;
     $("#mwx").onclick=()=>$("#wxcard").scrollIntoView({behavior:"smooth",block:"start"});
-    for(const b of $$("#occchips .chip, .mocc .chip"))b.onclick=()=>{S.occ=b.dataset.o;S.seen.clear();S.openSwap=null;render()};
+    for(const b of $$("#occchips .chip, .mocc .chip"))b.onclick=()=>{S.occ=b.dataset.o;S.seen.clear();S.openSwap=null;S.flow="looks";closeDrawer();render()};
     for(const b of $$("#vibechips .chip"))b.onclick=()=>{S.vibe=b.dataset.v;S.seen.clear();S.openSwap=null;render()};
-    renderLooks(ctx);
+    if(!closetReady()&&S.flow!=="hello")S.flow="hello";
+    if(S.flow==="looks")renderLooks(ctx);
+    renderFlow(ctx);
 }
 function renderLooks(ctx,keep){
     const u=S.user;const head=$("#lookshead"),box=$("#looks");
     const label=S.occ==="day"?"your day":(OCC[S.occ]||OCC.class).label.toLowerCase();
-    head.innerHTML=`<h2>Three looks for <em>${esc(label)}</em></h2><span class="viewtog" role="group" aria-label="Look view"><button data-vw="fig" aria-pressed="${S.lookView==="fig"}">Mannequin</button><button data-vw="flat" aria-pressed="${S.lookView==="flat"}">Flat lay</button></span><span class="timer num" id="timer">Deciding 0:00</span><button class="btn ghost small" id="refresh">${ICON.refresh} Refresh</button><div class="sub">${esc(dayLabel(ctx.iso))} · ${Math.round(ctx.feels)}° feels-like ${hm(ctx.s)}–${hm(Math.min(ctx.e,23))}${S.vibe!=="any"?" · "+esc(VIBES.find(v=>v[0]===S.vibe)[1]):""} · only pieces from your closet</div>`;
+    head.innerHTML=`<button type="button" class="backlink" id="flow-back">‹ Change plan</button><button type="button" class="wxchip" id="looks-wx">${wxIcon(ctx.wx,true)}<b class="num">${Math.round(ctx.feels)}°</b> feels · ${esc(ctx.wx.cond)}</button><h2>Looks for <em>${esc(label)}</em></h2><span class="viewtog" role="group" aria-label="Look view"><button data-vw="fig" aria-pressed="${S.lookView==="fig"}">Mannequin</button><button data-vw="flat" aria-pressed="${S.lookView==="flat"}">Flat lay</button></span><span class="timer num" id="timer">Deciding 0:00</span><button class="btn ghost small" id="refresh">${ICON.refresh} Refresh</button><div class="sub">${esc(dayLabel(ctx.iso))} · ${Math.round(ctx.feels)}° feels-like ${hm(ctx.s)}–${hm(Math.min(ctx.e,23))}${S.vibe!=="any"?" · "+esc(VIBES.find(v=>v[0]===S.vibe)[1]):""} · only pieces from your closet</div>`;
     const realItems=wardrobeItems();const cats=new Set(realItems.map(i=>T(i).cat));
     if(!((cats.has("top")&&cats.has("bottom"))||cats.has("dress"))){
         const has=k=>k==="top"?(cats.has("top")||cats.has("dress")):k==="bottom"?(cats.has("bottom")||cats.has("dress")):cats.has(k);
@@ -66,6 +68,8 @@ function renderLooks(ctx,keep){
     for(const b of $$(".piece",box))b.onclick=()=>{const k=b.dataset.card+":"+b.dataset.slot;S.openSwap=S.openSwap===k?null:k;renderLooks(ctx,true)};
     for(const b of $$(".swapopt",box))b.onclick=()=>{const i=+b.dataset.card,slot=b.dataset.slot,id=b.dataset.id;const realItems=wardrobeItems();const o=withSwap(S.shown[i],slot,id==="none"?null:realItems.find(x=>x.id===id));o.acc=pickAcc(o,ctx,realItems.filter(x=>T(x).cat==="acc"));o.sc=scoreOutfit(o,ctx);o.score=o.sc.score;o.key=okey(o);S.shown[i]=o;S.openSwap=null;renderLooks(ctx,true)};
     for(const b of $$(".wear",box))b.onclick=()=>wear(+b.dataset.card,ctx);
+    for(const b of $$(".detbtn",box))b.onclick=()=>{const i=+b.dataset.det,card=b.closest(".look"),open=!card.classList.contains("open");card.classList.toggle("open",open);b.setAttribute("aria-expanded",open);if(open)S.openDet.add(i);else S.openDet.delete(i)};
+    wireLooksUI(ctx,keep);
     dressPending();
 }
 function fitPct(sc){return clamp(Math.round(sc),40,99)}
@@ -99,10 +103,10 @@ function lookCard(o,i,ctx,worn){
     const core=o.dress&&o.bottom?`${nm(o.dress)} over ${nm(o.bottom)}`:o.inner?`${nm(host)} over ${nm(o.inner)}`:host?(o.bottom?`${nm(host)} & ${nm(o.bottom)}`:nm(host)):"look";
     const title=o.outer?`${nm(o.outer)}, ${core}`:core;
     const flat=[o.outer,o.top,o.inner,o.dress,o.waist,o.bottom,o.shoes,...(o.acc||[])].filter(Boolean);
-    return`<article class="look"><div class="alcove">${S.lookView==="flat"?`<div class="flatlay">${flat.map(p=>`<figure>${thumb(p)}<figcaption>${esc(p===o.inner?"Under":p===o.waist?"At waist":T(p).label)}</figcaption></figure>`).join("")}</div>`:mannequinSVG(o,i,{style:st,umbrella:umb,label:"Look "+(i+1)+": "+[o.outer,o.top,o.inner,o.dress,o.bottom,o.shoes].filter(Boolean).map(x=>x.name).join(", ")})}${o.waist&&S.lookView!=="flat"?`<span class="waistinset" title="Tied at the waist">${thumb(o.waist)}<i>tied at waist</i></span>`:""}<span class="badge">Look ${i+1}</span><span class="fit num" title="Fit score: weather, occasion, vibe and trend">${fitPct(o.score)} fit</span></div>
-   <div class="lookbody"><h3>${esc(title.charAt(0).toUpperCase()+title.slice(1))}</h3><ul class="pieces">${pieces}</ul>${tray}
-   <ul class="why">${why.map(w=>`<li>${esc(w)}</li>`).join("")}${trend?`<li class="t">${esc(trend)}</li>`:""}${styleNotes(o,st).length?`<li class="s"><span><b style="font-weight:500">How to wear it:</b> ${esc(styleNotes(o,st).join(" "))}</span></li>`:""}</ul>${extra}
-   <div class="lookfoot">${isWorn?`<span class="worn">✓ Logged for ${esc(dayLabel(ctx.iso).toLowerCase())}</span>`:`<button class="btn wear" data-card="${i}">Wear this look</button>`}<span style="font-size:12px;color:var(--muted)">Tap a piece to swap it</span></div></div></article>`;
+    return`<article class="look ${S.openDet.has(i)||(S.openSwap&&S.openSwap.startsWith(i+":"))?"open":""}" data-i="${i}"><div class="alcove">${S.lookView==="flat"?`<div class="flatlay">${flat.map(p=>`<figure>${thumb(p)}<figcaption>${esc(p===o.inner?"Under":p===o.waist?"At waist":T(p).label)}</figcaption></figure>`).join("")}</div>`:mannequinSVG(o,i,{style:st,umbrella:umb,label:"Look "+(i+1)+": "+[o.outer,o.top,o.inner,o.dress,o.bottom,o.shoes].filter(Boolean).map(x=>x.name).join(", ")})}${o.waist&&S.lookView!=="flat"?`<span class="waistinset" title="Tied at the waist">${thumb(o.waist)}<i>tied at waist</i></span>`:""}<span class="badge">Look ${i+1}</span><span class="fit num" title="Fit score: weather, occasion, vibe and trend">${fitPct(o.score)} fit</span></div>
+   <div class="lookbody"><h3>${esc(title.charAt(0).toUpperCase()+title.slice(1))}</h3><div class="lookdet" id="det-${i}"><ul class="pieces">${pieces}</ul>${tray}
+   <ul class="why">${why.map(w=>`<li>${esc(w)}</li>`).join("")}${trend?`<li class="t">${esc(trend)}</li>`:""}${styleNotes(o,st).length?`<li class="s"><span><b style="font-weight:500">How to wear it:</b> ${esc(styleNotes(o,st).join(" "))}</span></li>`:""}</ul>${extra}</div>
+   <div class="lookfoot">${isWorn?`<span class="worn">✓ Saved for ${esc(dayLabel(ctx.iso).toLowerCase())}</span>`:`<button class="btn wear" data-card="${i}">Wear this look</button>`}<button type="button" class="detbtn" data-det="${i}" aria-expanded="${S.openDet.has(i)||!!(S.openSwap&&S.openSwap.startsWith(i+":"))}" aria-controls="det-${i}">Pieces &amp; why</button></div></div></article>`;
 }
 async function wear(i,ctx){
     const o=S.shown[i],u=S.user,secs=Math.round((Date.now()-S.decisionStart)/1000);

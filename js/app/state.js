@@ -1,7 +1,7 @@
 "use strict";
 /* AGORA · App state, save, view switching */
 /* ---------- app state ---------- */
-const S={lookView:"fig",user:null,view:"today",date:todayISO(),occ:null,vibe:"any",shown:[],seen:new Set(),openSwap:null,decisionStart:Date.now(),list:[],caps:{sample:null,downloads:null,images:false}};
+const S={flow:"hello",openDet:new Set(),lookIdx:0,lookView:"fig",user:null,view:"today",date:todayISO(),occ:null,vibe:"any",shown:[],seen:new Set(),openSwap:null,decisionStart:Date.now(),list:[],caps:{sample:null,downloads:null,images:false}};
 async function save(){
     if(!S.user)return;
     await DB.put(S.user);
