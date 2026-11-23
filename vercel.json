@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/AGORA.html", "destination": "/", "permanent": false },
+    { "source": "/AGORA", "destination": "/", "permanent": false }
+  ]
+}
