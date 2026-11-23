@@ -23,17 +23,22 @@ function renderToday(){
 <div class="wx-stats"><div><b class="num">${Math.round(cur.hum)}%</b><span>Humidity</span></div><div><b class="num">${Math.round(wx.rainP*100)}%</b><span>Rain chance</span></div><div><b class="num">${wx.wind.toFixed(1)} m/s</b><span>Wind</span></div></div>
 <div class="hours">${hours.map(h=>`<div class="hour ${h.h>=Math.floor(ctx.s)&&h.h<=ctx.e?"inwin":""}"><span>${pad(h.h)}h</span><b class="num">${Math.round(h.t)}°</b><span class="rd">${h.wet?"rain":""}</span></div>`).join("")}</div>
 ${ctx.eveNeeded?`<div class="alert cold">${ICON.cold}<div><b>Colder tonight.</b> Feels ${Math.round(ctx.eve.feels)}° by ${pad(ctx.eve.h)}:00${ctx.feels-ctx.eve.feels>=1?`, ${Math.round(ctx.maxF-ctx.eve.feels)}° below the day's peak`:""}. Each look below names the outer layer to bring.</div></div>`:""}
-${ctx.rain||wx.rainP>=.5?`<div class="alert rain">${ICON.rain}<div><b>${wx.cond==="Snow"?"Snow":"Rain"} from ${pad(wx.rainStart)}:00 to ${pad(Math.min(24,wx.rainEnd))}:00.</b> ${ctx.rain?"Umbrella is part of every look; suede is scored down.":"It falls outside your plans, but pack an umbrella to be safe."}</div></div>`:""}
-<div class="src">AGORA daily weather dataset · Gyeonggi climatology model, hourly profile. Humidity is the daily relative humidity.</div>`;
+${ctx.rain||wx.rainP>=.5?`<div class="alert rain">${ICON.rain}<div><b>${wx.rains?`${wx.cond==="Snow"?"Snow":"Rain"} from ${pad(wx.rainStart)}:00 to ${pad(Math.min(24,wx.rainEnd))}:00.`:`${Math.round(wx.rainP*100)}% chance of rain.`}</b> ${ctx.rain?"Umbrella is part of every look; suede is scored down.":"It falls outside your plans, but pack an umbrella to be safe."}</div></div>`:""}
+<div class="src">${weatherSourceNote(wx)}</div>`;
     $("#citysel").onchange=async e=>{u.city=e.target.value;await save();S.seen.clear();render()};
     for(const b of $$(".day",$("#wxcard")))b.onclick=()=>{S.date=b.dataset.d;S.seen.clear();S.occ=null;S.openSwap=null;S.decisionStart=Date.now();render()};
     // schedule
     $("#schedcard").innerHTML=`<div class="wx-top"><span class="eyebrow">Calendar · ${esc(dayLabel(iso))}</span><a class="linkbtn" href="#week">Edit plans</a></div>
-${evs.length?`<ul>${evs.slice().sort((a,b)=>a.start.localeCompare(b.start)).map(e=>`<li><time>${e.start}</time><span>${esc(e.title)}</span><span class="tag">${esc((OCC[e.occ]||OCC.cafe).label)}</span></li>`).join("")}</ul>`:`<p style="margin:8px 0 0;font-size:14px;color:var(--muted)">No plans on this day. Pick an occasion below, or add plans on the Week page.</p>`}`;
+${evs.length?`<ul>${evs.slice().sort((a,b)=>a.start.localeCompare(b.start)).map(e=>`<li><time>${e.start}</time><span>${esc(e.title)}</span><span class="tag">${esc((OCC[e.occ]||OCC.cafe).label)}</span></li>`).join("")}</ul>`:`<p style="margin:8px 0 0;font-size:14px;color:var(--muted)">No plans on this day. Pick an occasion, or add plans on the Week page.</p>`}`;
     // picker
     const occChips=(evs.length?[`<button class="chip cal" data-o="day" aria-pressed="${S.occ==="day"}">Whole day, from calendar</button>`]:[]).concat(OCCASIONS.map(o=>`<button class="chip" data-o="${o.k}" aria-pressed="${S.occ===o.k}">${esc(o.label)}</button>`)).join("");
     $("#pickcard").innerHTML=`<h3>Occasion</h3><div class="chips" id="occchips">${occChips}</div><h3>Vibe</h3><div class="chips" id="vibechips">${VIBES.map(v=>`<button class="chip" data-v="${v[0]}" aria-pressed="${S.vibe===v[0]}">${v[1]}</button>`).join("")}</div>`;
-    for(const b of $$("#occchips .chip"))b.onclick=()=>{S.occ=b.dataset.o;S.seen.clear();S.openSwap=null;render()};
+    // compact bar shown above the looks on phones: weather summary + occasions
+    const occLabelNow=S.occ==="day"?"Your day":(OCC[S.occ]||OCC.class).label;
+    $("#mctx").innerHTML=`<button type="button" class="mwx" id="mwx" aria-label="Weather details for ${esc(dayLabel(iso))}"><b class="num">${Math.round(cur.t)}°</b><span>${esc(iso===todayISO()?"Now":"Noon")} · ${esc(wx.cond)} · H ${Math.round(wx.tmax)}° L ${Math.round(wx.tmin)}° · ${esc(wx.city)}${ctx.rain?" · umbrella":""}</span><span class="mwx-more">${esc(dayLabel(iso))} ▾</span></button>
+<div class="chips mocc" role="group" aria-label="Occasion">${occChips}</div>`;
+    $("#mwx").onclick=()=>$("#wxcard").scrollIntoView({behavior:"smooth",block:"start"});
+    for(const b of $$("#occchips .chip, .mocc .chip"))b.onclick=()=>{S.occ=b.dataset.o;S.seen.clear();S.openSwap=null;render()};
     for(const b of $$("#vibechips .chip"))b.onclick=()=>{S.vibe=b.dataset.v;S.seen.clear();S.openSwap=null;render()};
     renderLooks(ctx);
 }
@@ -43,7 +48,11 @@ function renderLooks(ctx,keep){
     head.innerHTML=`<h2>Three looks for <em>${esc(label)}</em></h2><span class="viewtog" role="group" aria-label="Look view"><button data-vw="fig" aria-pressed="${S.lookView==="fig"}">Mannequin</button><button data-vw="flat" aria-pressed="${S.lookView==="flat"}">Flat lay</button></span><span class="timer num" id="timer">Deciding 0:00</span><button class="btn ghost small" id="refresh">${ICON.refresh} Refresh</button><div class="sub">${esc(dayLabel(ctx.iso))} · ${Math.round(ctx.feels)}° feels-like ${hm(ctx.s)}–${hm(Math.min(ctx.e,23))}${S.vibe!=="any"?" · "+esc(VIBES.find(v=>v[0]===S.vibe)[1]):""} · only pieces from your closet</div>`;
     const realItems=wardrobeItems();const cats=new Set(realItems.map(i=>T(i).cat));
     if(!((cats.has("top")&&cats.has("bottom"))||cats.has("dress"))){
-        box.innerHTML=`<div class="empty"><h3>Your closet needs a few pieces first</h3><p>Add at least one top and one bottom (or a dress) and shoes. AGORA builds every look from what you own.</p><div class="chips"><button class="btn terra" id="emptyadd">+ Add clothing</button></div></div>`;
+        const has=k=>k==="top"?(cats.has("top")||cats.has("dress")):k==="bottom"?(cats.has("bottom")||cats.has("dress")):cats.has(k);
+        const steps=[["top","A top"],["bottom","A bottom, or a dress"],["shoes","Shoes (recommended)"]];
+        box.innerHTML=`<div class="empty"><h3>Your closet needs a few pieces first</h3><p>AGORA builds every look from what you own. Photograph each piece flat on a plain background.</p>
+<ul class="startlist">${steps.map(([k,l])=>`<li class="${has(k)?"done":""}"><span aria-hidden="true">${has(k)?"✓":""}</span>${l}${has(k)?'<span class="vh"> added</span>':""}</li>`).join("")}</ul>
+<div class="chips"><button class="btn terra" id="emptyadd">+ Add clothing</button></div></div>`;
         $("#emptyadd").onclick=()=>openAddSheet();
         $("#refresh").disabled=true;return;
     }
