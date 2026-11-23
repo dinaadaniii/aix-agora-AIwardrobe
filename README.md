@@ -15,7 +15,7 @@ Live site: deployed on Vercel from the `main` branch.
 - **2D Try-On**: dress a front-facing mannequin with your own clothing photos.
 - **Account**: rename your profile, export or import a JSON backup, or delete all data.
 
-Weather currently comes from a built-in Gyeonggi climate model, not a live forecast. Live weather (Open-Meteo) is planned for the next milestone.
+Weather is a live 16-day forecast from [Open-Meteo](https://open-meteo.com/) (free, no API key), cached in the browser for 3 hours. If it can't be reached, or for days beyond the forecast, AGORA falls back to its built-in Gyeonggi climate model and says so on the weather card.
 
 ## Run it locally
 
@@ -45,7 +45,7 @@ css/
 js/
   config.js              feature flags (SUPABASE_ENABLED, AI_TRYON_ENABLED)
   core/utils.js          DOM helpers, dates, colour maths
-  engine/weather.js      climate-based weather model
+  engine/weather.js      Open-Meteo forecast + climate-model fallback
   engine/catalogue.js    garment types, occasions, style vibes
   engine/score.js        recommendation context and outfit scoring
   render/mannequin.js    mannequin and garment drawing
@@ -78,8 +78,8 @@ The repository is connected to Vercel. Pushing to `main` deploys production; pus
 
 ## Roadmap
 
-1. **M0 Foundation**: merge the latest versions, split into files, deploy (this version)
-2. **M1 Mobile shell and Today**: bottom tab bar, Today hero card, live weather, onboarding, sample closet with photos
+1. **M0 Foundation**: merge the latest versions, split into files, deploy (done)
+2. **M1 Mobile shell and Today**: live weather, bottom tab bar, looks-first Today on phones, city in onboarding (done); sample closet with photos (next)
 3. **M2 Closet and Plan**: category tiles, outfit builder, month planning
 4. **M3 Stats and smarter picks**: cost per wear, wardrobe stats, rotation, feedback learning
 5. **M4 Polish**: installable PWA, Keep/Bye review, accessibility

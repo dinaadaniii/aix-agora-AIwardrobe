@@ -31,6 +31,7 @@ function openLocalWelcome(){
         <p style="margin:4px 0;color:var(--muted)">Your wardrobe is saved in this browser. No account needed. Next, add photos of a few tops, bottoms and shoes.</p></div>
         <label class="field">Your name<input id="local-name" maxlength="24" autocomplete="nickname" placeholder="e.g. Imran" required></label>
         <label class="field">Mannequin and looks<select id="local-gender">${genderOptions("female")}</select></label>
+        <label class="field">Your city, for the weather<select id="local-city">${Object.entries(CITIES).map(([k,c])=>`<option value="${k}" ${k==="ansan"?"selected":""}>${c.name}</option>`).join("")}</select></label>
         <div class="auth-actions" id="auth-actions" style="grid-template-columns:1fr"><button class="btn terra" type="submit">Start</button></div>
         <p class="auth-status" id="auth-status"></p>
     </form></div>`;
@@ -38,6 +39,7 @@ function openLocalWelcome(){
         e.preventDefault();
         const name=$("#local-name").value.trim()||"Guest",g=$("#local-gender").value;
         const u=newUser(name,false,g);
+        u.city=$("#local-city").value||"ansan";
         await DB.put(u);
         activateLocalUser(u);
         location.hash="#closet";
