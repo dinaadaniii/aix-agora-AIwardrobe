@@ -17,7 +17,6 @@ function renderCloset(){
 }
 
 /* photo processing: resize, cut the garment out of its background, read its colour */
-function loadImg(src){return new Promise((res,rej)=>{const im=new Image();im.crossOrigin="anonymous";im.onload=()=>res(im);im.onerror=()=>rej(new Error("Could not load clothing photo. Check its Supabase Storage URL and network access."));im.src=src})}
 function cutout(src){
     const k0=Math.min(1,520/Math.max(src.width,src.height)),W=Math.max(1,Math.round(src.width*k0)),H=Math.max(1,Math.round(src.height*k0)),N=W*H;
     const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d",{willReadFrequently:true});x.drawImage(src,0,0,W,H);

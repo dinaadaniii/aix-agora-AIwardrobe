@@ -6,6 +6,10 @@
 
 Live site: deployed on Vercel from the `main` branch.
 
+## Design
+
+Cloud-grey background, denim-indigo text and one raincoat-yellow accent for primary actions, set in Bricolage Grotesque. Colours and fonts are CSS variables at the top of `css/agora.css` (with a dark mode) and `css/landing.css`.
+
 ## Features
 
 - **Today**: weather for the selected day and city, your plans, and three recommended looks on a mannequin or as a flat lay. Tap a piece to swap it; *Wear this look* saves the outfit to that day's calendar.
@@ -28,20 +32,22 @@ py -m http.server 8000
 python3 -m http.server 8000
 ```
 
-Then open <http://localhost:8000>. Keep the terminal open while you use the app and press `Ctrl + C` to stop. Don't open `index.html` by double-clicking: browsers block some features on `file://` pages.
+Then open <http://localhost:8000> for the landing page, or <http://localhost:8000/app.html> for the app. Keep the terminal open while you use the app and press `Ctrl + C` to stop. Don't open `index.html` by double-clicking: browsers block some features on `file://` pages.
 
 ## Project structure
 
 No build step: plain HTML, CSS and JavaScript files, loaded in order by `index.html`.
 
 ```text
-index.html               app shell and page markup
-vercel.json              Vercel settings (clean URLs, old /AGORA.html link redirects to /)
+index.html               landing page (with a live demo of the recommender)
+app.html                 the app: shell and page markup
+vercel.json              Vercel settings (clean URLs, so the app is at /app; old /AGORA.html redirects there)
 favicon.svg
 css/
   base.css               browser reset
   features.css           try-on, calendar and account sheet styles
-  agora.css              main design: colours, type, layout
+  agora.css              app design: colours, type, layout
+  landing.css            landing page
 js/
   config.js              feature flags (SUPABASE_ENABLED, AI_TRYON_ENABLED)
   core/utils.js          DOM helpers, dates, colour maths
@@ -56,10 +62,11 @@ js/
   views/                 today, tryon, closet, plan (week + calendar), insights
   cloud/supabase.js      Supabase login and cloud sync (off for now)
   main.js                routing and startup
+  landing.js             landing page demo
 archive/                 earlier single-file versions, for reference
 ```
 
-The scripts share one global scope and must load in the order listed in `index.html`. Turning them into ES modules is planned for a later milestone.
+The scripts share one global scope and must load in the order listed in `app.html`. Turning them into ES modules is planned for a later milestone.
 
 ## Configuration
 
