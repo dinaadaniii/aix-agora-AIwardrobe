@@ -1,31 +1,34 @@
-/* Layout: lookbook spread — weather + choices on a narrow left rail, three arched "alcoves" holding mannequins on the right. */
+/* AGORA app theme: cloud background, denim-indigo ink, raincoat-yellow for primary actions. Layout: weather + choices on a left rail, three arched "alcoves" holding mannequins. */
 :root{
-    --linen:#F2EBE0; --paper:#FBF7F1; --sand:#E2D5C2; --line:#D6C7B1;
-    --terracotta:#A94E2C; --clay:#D3896A; --clay-soft:#EFD9CB;
-    --charcoal:#2A2623; --muted:#6F655B; --ink-soft:#4A433D;
-    --olive:#5F6B45; --rain:#3F6680; --warn:#A35A16;
-    --arch1:#E9DFD0; --arch2:#EAD3C4; --arch3:#DCD9D0;
-    --shadow:0 1px 0 rgba(42,38,35,.04),0 8px 24px -14px rgba(42,38,35,.25);
-    --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
-    --f-body:"Jost","Futura","Century Gothic","Avenir Next",system-ui,sans-serif;
+    --linen:#EEF0F3; --paper:#FFFFFF; --sand:#E3E7EE; --line:#D8DCE4;
+    --terracotta:#3552A0; --clay:#FFC929; --clay-soft:#FFF1BF;
+    --charcoal:#18203A; --muted:#5B6378; --ink-soft:#353D55;
+    --olive:#3E7A50; --rain:#3552A0; --warn:#8F5600;
+    --arch1:#E2E8F3; --arch2:#F4EED9; --arch3:#E3EAE6;
+    --shadow:0 1px 0 rgba(24,32,58,.04),0 10px 28px -18px rgba(24,32,58,.35);
+    --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --f-body:"Bricolage Grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --sun:#FFC929; --ink:#18203A;
     color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-    --linen:#1D1A18; --paper:#262220; --sand:#3A3430; --line:#4A423C;
-    --terracotta:#E48159; --clay:#C98462; --clay-soft:#43312A;
-    --charcoal:#F0E8DD; --muted:#ACA195; --ink-soft:#D2C8BC;
-    --olive:#A6B489; --rain:#8DB4D0; --warn:#E3A35F;
-    --arch1:#302B27; --arch2:#3A2C26; --arch3:#2C2B29;
-    --shadow:0 1px 0 rgba(0,0,0,.2),0 10px 26px -14px rgba(0,0,0,.6);
+    --linen:#11162A; --paper:#1A2139; --sand:#252E4A; --line:#2F395A;
+    --terracotta:#9DB6FF; --clay:#FFC929; --clay-soft:#3A3418;
+    --charcoal:#EEF0F6; --muted:#9CA4BD; --ink-soft:#CBD1E1;
+    --olive:#8CC49A; --rain:#9DB6FF; --warn:#F2B35A;
+    --arch1:#1F2842; --arch2:#2B2A22; --arch3:#1F2A2A;
+    --shadow:0 1px 0 rgba(0,0,0,.2),0 12px 28px -16px rgba(0,0,0,.6);
+    --sun:#FFC929; --ink:#18203A;
     color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-    --linen:#1D1A18; --paper:#262220; --sand:#3A3430; --line:#4A423C;
-    --terracotta:#E48159; --clay:#C98462; --clay-soft:#43312A;
-    --charcoal:#F0E8DD; --muted:#ACA195; --ink-soft:#D2C8BC;
-    --olive:#A6B489; --rain:#8DB4D0; --warn:#E3A35F;
-    --arch1:#302B27; --arch2:#3A2C26; --arch3:#2C2B29;
-    --shadow:0 1px 0 rgba(0,0,0,.2),0 10px 26px -14px rgba(0,0,0,.6);
+    --linen:#11162A; --paper:#1A2139; --sand:#252E4A; --line:#2F395A;
+    --terracotta:#9DB6FF; --clay:#FFC929; --clay-soft:#3A3418;
+    --charcoal:#EEF0F6; --muted:#9CA4BD; --ink-soft:#CBD1E1;
+    --olive:#8CC49A; --rain:#9DB6FF; --warn:#F2B35A;
+    --arch1:#1F2842; --arch2:#2B2A22; --arch3:#1F2A2A;
+    --shadow:0 1px 0 rgba(0,0,0,.2),0 12px 28px -16px rgba(0,0,0,.6);
+    --sun:#FFC929; --ink:#18203A;
     color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -303,7 +306,7 @@ main{max-width:1240px;margin:0 auto;padding-top:22px}
     min-height: 400px;
     overflow: hidden;
     border-radius: 16px;
-    background: #f3f0eb;
+    background: var(--sand);
 }
 
 #agora3d-canvas canvas {
@@ -329,7 +332,7 @@ main{max-width:1240px;margin:0 auto;padding-top:22px}
 }
 
 .agora-tryon-controls button:hover {
-    background: #e9e3da;
+    background: var(--line);
 }
 
 .agora-tryon-hint {
@@ -389,3 +392,29 @@ nav.tabs a .ti{display:none}
     .sheet{border-radius:20px 20px 0 0;max-height:92vh;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
 }
 .src a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+
+
+/* ---------- v2 theme overrides ---------- */
+body{-webkit-font-smoothing:antialiased;font-optical-sizing:auto}
+h1,h2,h3{font-weight:700;letter-spacing:-.02em}
+h1{font-variation-settings:"wdth" 85;letter-spacing:-.03em}
+h1 em,h2 em,h3 em{font-style:normal;color:inherit}
+.eyebrow{text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;color:var(--muted)}
+.brand{text-decoration:none;color:inherit}
+.brand b{font-family:var(--f-display);font-weight:800;letter-spacing:.06em;font-variation-settings:"wdth" 80;color:var(--charcoal)}
+.brand span{letter-spacing:0}
+.btn.terra{background:var(--sun);color:var(--ink);border:2px solid var(--ink);font-weight:600}
+.btn.terra:hover{background:#FFD54F}
+.btn.terra:disabled{opacity:.5}
+nav.tabs a{font-weight:500}
+.wx-temp{font-weight:800;letter-spacing:-.05em;font-variation-settings:"wdth" 75}
+.lookshead h2{font-variation-settings:"wdth" 85}
+.look{border-radius:22px}
+.timer{font-variant-numeric:tabular-nums}
+@media (max-width:760px){
+    nav.tabs a[aria-current="page"]{background:var(--clay-soft);color:var(--charcoal);font-weight:700}
+}
+
+.eyebrow,.avatar,.wx-stats span,.picker h3,.staple .big small,.cover th,.tile span{text-transform:none;letter-spacing:0}
+.lookshead h2 em{color:inherit}
+.avatar{text-transform:uppercase}

@@ -4,11 +4,11 @@
 .tryon-picker h2,.tryon-board-wrap h2{font-size:18px;margin:0 0 8px}
 .tryon-note{font-size:13px;color:var(--muted);line-height:1.5}
 .tryon-groups{display:grid;gap:14px;margin-top:14px}
-.tryon-group h3{font:500 13px var(--f-body);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 7px}
+.tryon-group h3{font:500 13px var(--f-body);color:var(--muted);margin:0 0 7px}
 .tryon-choice-list{display:grid;gap:7px}
 .tryon-choice{width:100%;display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:12px;background:transparent;text-align:left;cursor:pointer}
 .tryon-choice[aria-pressed="true"]{border-color:var(--terracotta);background:var(--clay-soft)}
-.tryon-choice img{width:52px;height:58px;object-fit:contain;background:#f4f1ec;border-radius:8px}
+.tryon-choice img{width:52px;height:58px;object-fit:contain;background:var(--linen);border-radius:8px}
 .tryon-choice span{font-size:13px;flex:1}
 .tryon-choice small{color:var(--muted);font-size:11px}
 .tryon-board-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -16,7 +16,7 @@
 .tryon-man-body{position:absolute;inset:0;width:100%;height:100%}
 .tryon-board>svg{display:block;width:100%;height:100%;object-fit:contain}
 .tryon-board-empty{pointer-events:none}
-.tryon-board-empty{position:absolute;left:8%;right:8%;bottom:12px;text-align:center;font-size:12px;color:#76695e;z-index:8}
+.tryon-board-empty{position:absolute;left:8%;right:8%;bottom:12px;text-align:center;font-size:12px;color:var(--muted);z-index:8}
 .tryon-clear-row{display:flex;justify-content:center;margin-top:12px}
 .tryon-empty{color:var(--muted);text-align:center;font-size:14px;padding:18px}
 .ai-model-lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,260px);gap:18px;align-items:center;margin:18px 0;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--paper,#fff)}
@@ -52,4 +52,4 @@
 .auth-sheet input,.auth-sheet select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--charcoal)}
 .auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .auth-status{font-size:13px;color:var(--muted);min-height:18px}
-.auth-status.error{color:#a12d24}
+.auth-status.error{color:#B42318}

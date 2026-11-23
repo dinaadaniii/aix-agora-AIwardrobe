@@ -34,3 +34,4 @@ const NAMED=[["Black","#1d1c1b"],["Charcoal","#3b3a39"],["Grey","#8d8b88"],["Lig
 function colorName(hex){let best=NAMED[0],bd=1e9;for(const n of NAMED){const d=cdist(hex,n[1]);if(d<bd){bd=d;best=n}}return best[0]}
 function isNeutral(hex){const{h,s,l}=hsl(hex);if(s<.16||l<.13||l>.93)return true;if(h>=15&&h<=50&&s<.6)return true;if(h>=195&&h<=235&&l<.45)return true;if(h>=55&&h<=100&&s<.4&&l<.5)return true;return false}
 function isWarmNeutral(hex){const{h,s,l}=hsl(hex);return(h>=15&&h<=50&&s>=.12&&s<.65)||(s<.12&&l>.75)}
+function loadImg(src){return new Promise((res,rej)=>{const im=new Image();im.crossOrigin="anonymous";im.onload=()=>res(im);im.onerror=()=>rej(new Error("Could not load this clothing photo."));im.src=src})}
