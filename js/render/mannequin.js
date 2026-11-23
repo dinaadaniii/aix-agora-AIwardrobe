@@ -297,7 +297,7 @@ function srcOf(it){
     const k=it.type+it.color+(it.pattern||"")+(it.color2||"");if(SRCC.has(k))return SRCC.get(k);
     const svg=flatSVG(it),vb=svg.match(/viewBox="([^"]+)"/)[1].split(" ").map(Number);
     const r={src:"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg),a:vb[3]/vb[2]};SRCC.set(k,r);return r}
-const thumb=it=>it.img?`<img src="${it.img}" alt="">`:'<span class="photo-missing">No photo</span>';
+const thumb=it=>it.img?`<img src="${it.cut&&!it.keepBg?it.cut:it.img}" alt="">`:'<span class="photo-missing">No photo</span>';
 // A saved photo is a real wardrobe item even if an older version left sample=true in its metadata.
 // Hide only sample placeholders that do not have an uploaded photo.
 const wardrobeItems=()=>S.user?(S.user.items||[]).filter(it=>!!it.img):[];

@@ -4,22 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>AGORA: outfits for your weather and your week</title>
-<meta name="description" content="AGORA reads the forecast and your schedule, then suggests outfits from clothes you already own. Free, no account, and your closet stays on your device.">
-<meta name="theme-color" content="#EEF0F3">
+<meta name="description" content="AGORA reads the forecast and your schedule, then picks outfits from clothes you already own. Free, no account, and your closet stays on your device.">
+<meta name="theme-color" content="#0F0D0B">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap">
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="nav">
-    <a class="wordmark" href="./" aria-label="AGORA home">AGORA</a>
+<header class="nav" id="nav">
+    <a class="wordmark" href="./" aria-label="AGORA home">AGORA<i aria-hidden="true"></i></a>
     <nav aria-label="Page sections">
+        <a href="#demo">Try it</a>
         <a href="#how">How it works</a>
         <a href="#features">Features</a>
-        <a href="#faq">Questions</a>
+        <a href="#faq">FAQ</a>
     </nav>
     <a class="btn btn-sun small" href="app.html">Open AGORA</a>
 </header>
@@ -27,152 +29,157 @@
 <main id="main">
     <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-            <h1 id="hero-title">Get dressed for today’s weather and plans, from clothes you already own.</h1>
-            <p class="lede">AGORA reads the forecast and your schedule, then suggests three outfits from your own closet. No account and nothing to buy.</p>
+            <p class="pill"><span class="dot" aria-hidden="true"></span>Free · No account · Built at Hanyang ERICA</p>
+            <h1 id="hero-title">
+                <span class="l1">What to wear</span>
+                <span class="l2">for <span class="rot" id="rot" aria-live="off">class</span></span>
+                <span class="l3">sorted.</span>
+            </h1>
+            <p class="lede">AGORA checks the forecast and your schedule, then puts together three outfits from clothes you already own. Snap your closet once. Get dressed in a minute, every morning.</p>
             <div class="cta-row">
                 <a class="btn btn-sun" href="app.html">Start with my closet</a>
-                <a class="btn btn-line" href="#how">See how it works</a>
+                <a class="btn btn-ghost" href="#demo">Try the demo</a>
             </div>
-            <p class="fine">Works in your browser on phone or laptop. Your photos stay on your device.</p>
+            <dl class="stats">
+                <div><dt>Outfits a day</dt><dd data-count="3">3</dd></div>
+                <div><dt>Days of forecast</dt><dd data-count="16">16</dd></div>
+                <div><dt>Sign-ups needed</dt><dd data-count="0">0</dd></div>
+            </dl>
         </div>
-
-        <div class="demo" id="demo" aria-labelledby="demo-title">
-            <div class="demo-stage">
-                <div class="demo-fig" id="demo-fig" aria-live="polite"></div>
-                <div class="demo-temp" aria-hidden="true"><span id="demo-temp-big">8</span><sup>°</sup></div>
-            </div>
-            <div class="demo-panel">
-                <h2 id="demo-title">Try it: change the weather</h2>
-                <label class="slider">
-                    <span>Today’s high <b id="demo-temp-label">8°C</b></span>
-                    <input type="range" id="demo-temp" min="-8" max="32" step="1" value="8" aria-describedby="demo-out">
-                    <span class="ticks" aria-hidden="true"><span>−8°</span><span>12°</span><span>32°</span></span>
-                </label>
-                <div class="demo-row">
-                    <label class="switch"><input type="checkbox" id="demo-rain"><span>Rain in the afternoon</span></label>
-                </div>
-                <div class="seg" role="radiogroup" aria-label="Occasion">
-                    <label><input type="radio" name="demo-occ" value="class" checked><span>Class</span></label>
-                    <label><input type="radio" name="demo-occ" value="date"><span>Date</span></label>
-                    <label><input type="radio" name="demo-occ" value="athletic"><span>Gym</span></label>
-                </div>
-                <div class="demo-out" id="demo-out"></div>
-                <p class="fine">Sample closet. In the app, every look uses photos of your own clothes.</p>
-            </div>
+        <div class="hero-wall" aria-hidden="true">
+            <div class="col" data-set="flat"></div>
+            <div class="col up" data-set="street"></div>
+            <div class="col" data-set="rack"></div>
         </div>
     </section>
 
-    <section class="facts" aria-label="AGORA at a glance">
-        <p><b>3</b> outfits suggested for each day</p>
-        <p><b>16</b> days of live forecast</p>
-        <p><b>0</b> sign-ups needed</p>
-        <p><b>1</b> place your closet lives: your device</p>
+    <div class="ticker" aria-hidden="true"><div class="ticker-track">
+        <span>Snap your closet</span><span>Check the sky</span><span>Get three looks</span><span>Wear one</span><span>Repeat tomorrow</span>
+        <span>Snap your closet</span><span>Check the sky</span><span>Get three looks</span><span>Wear one</span><span>Repeat tomorrow</span>
+    </div></div>
+
+    <section class="demo-sec" id="demo" aria-labelledby="demo-title">
+        <div class="sec-head">
+            <p class="kicker">Live demo</p>
+            <h2 id="demo-title">Change the weather.<br>Watch it re-dress.</h2>
+            <p class="sec-sub">This is the real AGORA engine, running on a sample closet. Drag the temperature, add rain, switch the plan.</p>
+        </div>
+        <div class="demo" id="demo-box">
+            <div class="demo-stage" id="demo-stage">
+                <img class="demo-bg" id="demo-bg" alt="" src="">
+                <div class="demo-shade"></div>
+                <div class="demo-temp" aria-hidden="true"><span id="demo-temp-big">8</span>°</div>
+                <div class="demo-fig" id="demo-fig" aria-live="polite"></div>
+                <div class="demo-badge" id="demo-badge">Partly cloudy</div>
+            </div>
+            <div class="demo-panel">
+                <label class="slider">
+                    <span class="slider-top"><span>Today’s high</span><b id="demo-temp-label">8°C</b></span>
+                    <input type="range" id="demo-temp" min="-8" max="32" step="1" value="8">
+                    <span class="ticks" aria-hidden="true"><span>−8° freezing</span><span>12°</span><span>32° scorching</span></span>
+                </label>
+                <label class="toggle"><input type="checkbox" id="demo-rain"><span class="track" aria-hidden="true"><span class="knob"></span></span><span>Rain this afternoon</span></label>
+                <fieldset class="occ">
+                    <legend>Today’s plan</legend>
+                    <label><input type="radio" name="demo-occ" value="class" checked><span>Class</span></label>
+                    <label><input type="radio" name="demo-occ" value="cafe"><span>Café</span></label>
+                    <label><input type="radio" name="demo-occ" value="date"><span>Date</span></label>
+                    <label><input type="radio" name="demo-occ" value="athletic"><span>Gym</span></label>
+                    <label><input type="radio" name="demo-occ" value="formal"><span>Formal</span></label>
+                </fieldset>
+                <div class="demo-out" id="demo-out"></div>
+            </div>
+        </div>
     </section>
 
     <section class="how" id="how" aria-labelledby="how-title">
-        <h2 id="how-title">How it works</h2>
-        <ol class="steps">
-            <li>
-                <span class="step-n" aria-hidden="true">1</span>
-                <h3>Photograph your clothes</h3>
-                <p>Lay each piece flat on a plain surface and take a photo, or pick several at once. AGORA cuts out the background and reads the main colour right in your browser.</p>
-            </li>
-            <li>
-                <span class="step-n" aria-hidden="true">2</span>
-                <h3>Add your week</h3>
-                <p>Type in classes and plans, or import a calendar file (.ics). AGORA uses the hours you’re out, not just the day’s average temperature.</p>
-            </li>
-            <li>
-                <span class="step-n" aria-hidden="true">3</span>
-                <h3>Pick a look and go</h3>
-                <p>Each day you get three outfits that suit the forecast, the occasion and each other. Tap a piece to swap it. Choose one and it’s saved to your calendar.</p>
-            </li>
-        </ol>
+        <div class="how-photo" aria-hidden="true">
+            <img id="how-img" src="" alt="">
+            <span class="how-num" id="how-num">1</span>
+        </div>
+        <div class="how-steps">
+            <p class="kicker">How it works</p>
+            <h2 id="how-title">Three steps.<br>Then just get dressed.</h2>
+            <ol>
+                <li data-step="1" data-img="flat:0">
+                    <h3><span>1</span>Snap your clothes</h3>
+                    <p>Lay a piece flat and take a photo, or pick up to 20 at once. AGORA cuts out the background and names the colour, right in your browser.</p>
+                </li>
+                <li data-step="2" data-img="street:3">
+                    <h3><span>2</span>Add your week</h3>
+                    <p>Type in classes and plans, or import your timetable as a calendar file. AGORA dresses you for the hours you’re actually outside.</p>
+                </li>
+                <li data-step="3" data-img="rack:0">
+                    <h3><span>3</span>Pick a look and go</h3>
+                    <p>Three outfits that fit the forecast, the plan and each other. Swap any piece with a tap. Wear one and it lands on your calendar.</p>
+                </li>
+            </ol>
+        </div>
     </section>
 
     <section class="features" id="features" aria-labelledby="features-title">
-        <h2 id="features-title">Everything your wardrobe needs, in one place</h2>
-        <div class="feat-list">
-            <article class="feat">
+        <div class="sec-head">
+            <p class="kicker">Features</p>
+            <h2 id="features-title">Your whole wardrobe,<br>working for you.</h2>
+        </div>
+        <div class="bento">
+            <article class="tile t-big" style="--img:url(https://images.unsplash.com/photo-1632693217835-b482d9ca9ba0?auto=format&fit=crop&w=1000&q=70)">
                 <h3>Weather that follows your day</h3>
-                <p>A live hourly forecast for your city, matched to the hours of your plans. If the evening turns cold, the look names the layer to bring. If it rains, an umbrella joins the outfit.</p>
+                <p>Live hourly forecast for your city, matched to your plans. Cold evening? The look names the layer to bring. Rain? An umbrella joins the outfit.</p>
             </article>
-            <article class="feat">
+            <article class="tile" style="--img:url(https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=800&q=70)">
                 <h3>A closet that sorts itself</h3>
-                <p>Upload up to 20 photos at once. Each piece gets its background removed, its colour named and its category set, ready to edit.</p>
+                <p>Background removed, colour named, category set.</p>
             </article>
-            <article class="feat">
+            <article class="tile" style="--img:url(https://images.unsplash.com/photo-1708242355178-d8c929b01a9d?auto=format&fit=crop&w=800&q=70)">
                 <h3>Looks that work together</h3>
-                <p>Outfits are scored on warmth, formality, colour harmony and pattern clashes, then explained in plain words. Choose mannequin or flat-lay view.</p>
+                <p>Scored for warmth, formality, colour and pattern.</p>
             </article>
-            <article class="feat">
+            <article class="tile" style="--img:url(https://images.unsplash.com/photo-1748696147482-413d1e29ed8f?auto=format&fit=crop&w=800&q=70)">
                 <h3>Week and month planning</h3>
-                <p>See each day’s weather and best look side by side, import your timetable, and find every outfit you’ve saved on the calendar.</p>
+                <p>Import your timetable. See every saved outfit on the calendar.</p>
             </article>
-            <article class="feat">
+            <article class="tile" style="--img:url(https://images.unsplash.com/photo-1551232864-3f0890e580d9?auto=format&fit=crop&w=800&q=70)">
                 <h3>2D try-on</h3>
-                <p>Dress a mannequin with your own photos to see how pieces sit together before you commit to a combination.</p>
+                <p>Dress a mannequin with your own photos.</p>
             </article>
-            <article class="feat">
-                <h3>Backup in one tap</h3>
-                <p>Export your whole closet, plans and history as a single file, and import it on another browser or phone.</p>
+            <article class="tile t-wide t-sun">
+                <h3>Your closet stays on your device</h3>
+                <p>No account. Photos are processed and saved in your browser, never on a server. Export a backup file any time.</p>
             </article>
         </div>
-        <div class="soon" aria-labelledby="soon-title">
-            <h3 id="soon-title">Coming next</h3>
+        <div class="soon">
+            <p class="kicker">Coming next</p>
             <ul>
-                <li><b>Wardrobe stats.</b> Cost per wear, most and least worn pieces, and your colour mix.</li>
-                <li><b>Keep or let go.</b> A quick review of pieces you haven’t worn in 90 days.</li>
-                <li><b>Packing lists.</b> Pack for a trip from your own closet and the destination’s forecast.</li>
+                <li><b>Wardrobe stats</b><span>Cost per wear, most and least worn, your colour mix.</span></li>
+                <li><b>Keep or let go</b><span>Swipe through pieces you haven’t worn in 90 days.</span></li>
+                <li><b>Packing lists</b><span>Pack for a trip from your closet and the forecast there.</span></li>
             </ul>
         </div>
     </section>
 
-    <section class="private" aria-labelledby="private-title">
-        <div>
-            <h2 id="private-title">Your closet stays on your device</h2>
-            <p>There’s no account to create. Photos are processed in your browser and saved there, not on a server. Only the weather request leaves your device, and it sends just your city.</p>
-        </div>
-        <a class="btn btn-sun" href="app.html">Start with my closet</a>
-    </section>
-
     <section class="faq" id="faq" aria-labelledby="faq-title">
         <h2 id="faq-title">Questions</h2>
-        <details>
-            <summary>Is AGORA free?</summary>
-            <p>Yes. AGORA is a student project. There’s no account, subscription or payment.</p>
-        </details>
-        <details>
-            <summary>Where are my photos stored?</summary>
-            <p>In your browser’s storage on the device you’re using. Clearing your browser data deletes them, so export a backup from your profile first.</p>
-        </details>
-        <details>
-            <summary>Which cities have live weather?</summary>
-            <p>Ansan, Suwon, Seoul, Icheon, Paju, Yangpyeong and Dongducheon. Forecasts come from Open-Meteo and cover 16 days. If the forecast can’t be reached, AGORA uses an estimate from Gyeonggi climate data and tells you so.</p>
-        </details>
-        <details>
-            <summary>Can I use it on my phone and my laptop?</summary>
-            <p>Yes, in any modern browser. Your closet doesn’t sync between devices yet: export a backup on one and import it on the other.</p>
-        </details>
-        <details>
-            <summary>What photos work best?</summary>
-            <p>One piece per photo, laid flat on a plain, contrasting surface, with the whole garment in frame. Daylight helps AGORA read the colour correctly.</p>
-        </details>
-        <details>
-            <summary>Why didn’t I get three looks?</summary>
-            <p>AGORA only suggests outfits it can build from your closet. Add at least a top, a bottom or a dress, and shoes. More pieces give more and better combinations.</p>
-        </details>
+        <div class="faq-list">
+            <details><summary>Is AGORA free?</summary><p>Yes. It’s a student project. No account, no subscription, no payment.</p></details>
+            <details><summary>Where are my photos stored?</summary><p>In your browser’s storage on the device you’re using. Clearing browser data deletes them, so export a backup from your profile first.</p></details>
+            <details><summary>Which cities have live weather?</summary><p>Ansan, Suwon, Seoul, Icheon, Paju, Yangpyeong and Dongducheon, with a 16-day forecast from Open-Meteo. If it can’t be reached, AGORA uses a Gyeonggi climate estimate and tells you.</p></details>
+            <details><summary>Can I use it on my phone and laptop?</summary><p>Yes, in any modern browser. Your closet doesn’t sync between devices yet: export a backup on one and import it on the other.</p></details>
+            <details><summary>What photos work best?</summary><p>One piece per photo, laid flat on a plain surface that contrasts with it, whole garment in frame, in daylight.</p></details>
+            <details><summary>Why didn’t I get three looks?</summary><p>AGORA only suggests outfits it can build from your closet. Add at least a top, a bottom or a dress, and shoes. More pieces give more combinations.</p></details>
+        </div>
     </section>
 
     <section class="final" aria-labelledby="final-title">
-        <h2 id="final-title">Tomorrow morning, skip the pile on the chair.</h2>
-        <a class="btn btn-sun" href="app.html">Start with my closet</a>
+        <div class="final-bg" aria-hidden="true"></div>
+        <h2 id="final-title">Tomorrow morning,<br>skip the pile on the chair.</h2>
+        <a class="btn btn-sun big" href="app.html">Start with my closet</a>
     </section>
 </main>
 
 <footer class="foot">
-    <span class="wordmark">AGORA</span>
-    <p>A student project by Dina and Imran. Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>.</p>
+    <span class="wordmark">AGORA<i aria-hidden="true"></i></span>
+    <p>A student project by Dina and Imran. Weather by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>. Photos from <a href="https://unsplash.com/" target="_blank" rel="noopener">Unsplash</a>.</p>
     <a href="app.html">Open the app</a>
 </footer>
 
@@ -185,6 +192,7 @@
 <script src="js/data/db.js" defer></script>
 <script src="js/engine/score.js" defer></script>
 <script src="js/app/state.js" defer></script>
+<script src="js/photos.js" defer></script>
 <script src="js/landing.js" defer></script>
 </body>
 </html>

@@ -1,34 +1,38 @@
-/* AGORA app theme: cloud background, denim-indigo ink, raincoat-yellow for primary actions. Layout: weather + choices on a left rail, three arched "alcoves" holding mannequins. */
+/* AGORA app theme: espresso black, bone white, signal yellow; Anton headlines, Plus Jakarta Sans text. Layout: weather + choices on a left rail, three arched "alcoves" holding mannequins. */
 :root{
-    --linen:#EEF0F3; --paper:#FFFFFF; --sand:#E3E7EE; --line:#D8DCE4;
-    --terracotta:#3552A0; --clay:#FFC929; --clay-soft:#FFF1BF;
-    --charcoal:#18203A; --muted:#5B6378; --ink-soft:#353D55;
-    --olive:#3E7A50; --rain:#3552A0; --warn:#8F5600;
-    --arch1:#E2E8F3; --arch2:#F4EED9; --arch3:#E3EAE6;
-    --shadow:0 1px 0 rgba(24,32,58,.04),0 10px 28px -18px rgba(24,32,58,.35);
-    --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-    --f-body:"Bricolage Grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-    --sun:#FFC929; --ink:#18203A;
-    color-scheme:light;
+    --linen:#0F0D0B; --paper:#1A1714; --sand:#2A2520; --line:#36302A;
+    --terracotta:#FFCE1F; --clay:#FFCE1F; --clay-soft:#3A3110;
+    --charcoal:#F4EEE4; --muted:#A69D90; --ink-soft:#D9D1C5;
+    --olive:#9CCB8A; --rain:#8FC3FF; --warn:#FFB55C;
+    --arch1:#25211C; --arch2:#2B2618; --arch3:#22231F;
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 16px 34px -18px rgba(0,0,0,.8);
+    --f-display:"Anton","Impact","Arial Narrow Bold",sans-serif;
+    --f-body:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --sun:#FFCE1F; --ink:#141210;
+    color-scheme:dark;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-    --linen:#11162A; --paper:#1A2139; --sand:#252E4A; --line:#2F395A;
-    --terracotta:#9DB6FF; --clay:#FFC929; --clay-soft:#3A3418;
-    --charcoal:#EEF0F6; --muted:#9CA4BD; --ink-soft:#CBD1E1;
-    --olive:#8CC49A; --rain:#9DB6FF; --warn:#F2B35A;
-    --arch1:#1F2842; --arch2:#2B2A22; --arch3:#1F2A2A;
-    --shadow:0 1px 0 rgba(0,0,0,.2),0 12px 28px -16px rgba(0,0,0,.6);
-    --sun:#FFC929; --ink:#18203A;
+    --linen:#0F0D0B; --paper:#1A1714; --sand:#2A2520; --line:#36302A;
+    --terracotta:#FFCE1F; --clay:#FFCE1F; --clay-soft:#3A3110;
+    --charcoal:#F4EEE4; --muted:#A69D90; --ink-soft:#D9D1C5;
+    --olive:#9CCB8A; --rain:#8FC3FF; --warn:#FFB55C;
+    --arch1:#25211C; --arch2:#2B2618; --arch3:#22231F;
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 16px 34px -18px rgba(0,0,0,.8);
+    --f-display:"Anton","Impact","Arial Narrow Bold",sans-serif;
+    --f-body:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --sun:#FFCE1F; --ink:#141210;
     color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-    --linen:#11162A; --paper:#1A2139; --sand:#252E4A; --line:#2F395A;
-    --terracotta:#9DB6FF; --clay:#FFC929; --clay-soft:#3A3418;
-    --charcoal:#EEF0F6; --muted:#9CA4BD; --ink-soft:#CBD1E1;
-    --olive:#8CC49A; --rain:#9DB6FF; --warn:#F2B35A;
-    --arch1:#1F2842; --arch2:#2B2A22; --arch3:#1F2A2A;
-    --shadow:0 1px 0 rgba(0,0,0,.2),0 12px 28px -16px rgba(0,0,0,.6);
-    --sun:#FFC929; --ink:#18203A;
+    --linen:#0F0D0B; --paper:#1A1714; --sand:#2A2520; --line:#36302A;
+    --terracotta:#FFCE1F; --clay:#FFCE1F; --clay-soft:#3A3110;
+    --charcoal:#F4EEE4; --muted:#A69D90; --ink-soft:#D9D1C5;
+    --olive:#9CCB8A; --rain:#8FC3FF; --warn:#FFB55C;
+    --arch1:#25211C; --arch2:#2B2618; --arch3:#22231F;
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 16px 34px -18px rgba(0,0,0,.8);
+    --f-display:"Anton","Impact","Arial Narrow Bold",sans-serif;
+    --f-body:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --sun:#FFCE1F; --ink:#141210;
     color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -418,3 +422,38 @@ nav.tabs a{font-weight:500}
 .eyebrow,.avatar,.wx-stats span,.picker h3,.staple .big small,.cover th,.tile span{text-transform:none;letter-spacing:0}
 .lookshead h2 em{color:inherit}
 .avatar{text-transform:uppercase}
+
+/* ---------- v3: espresso + signal yellow ---------- */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45;background-image:radial-gradient(rgba(255,206,31,.06) 1px,transparent 1.2px);background-size:22px 22px}
+main{position:relative;z-index:1}
+#overlay{position:relative;z-index:50}
+#toastslot{position:relative;z-index:60}
+header.top{position:sticky;z-index:5;background:rgba(15,13,11,.94)}
+h1,h2{font-family:var(--f-display);font-weight:400;text-transform:uppercase;letter-spacing:.005em;line-height:.95;font-variation-settings:normal}
+h1{font-size:clamp(40px,5vw,64px)}
+.lookshead h2{font-size:clamp(30px,3.4vw,44px)}
+h3{font-family:var(--f-body);font-weight:700;letter-spacing:-.01em}
+.look h3,.wday h3{font-family:var(--f-body)}
+.brand b{font-family:var(--f-display);font-weight:400;letter-spacing:.04em;font-size:28px;color:var(--charcoal)}
+.brand b::after{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sun);margin-left:3px}
+.btn.terra{background:var(--sun);color:var(--ink);border:0;font-weight:700;box-shadow:0 8px 24px -10px rgba(255,206,31,.6)}
+.btn.terra:hover{background:#FFE070}
+nav.tabs a[aria-current="page"]{background:var(--sun);color:var(--ink);font-weight:700}
+.chip[aria-pressed="true"],.viewtog button[aria-pressed="true"]{background:var(--sun)!important;color:var(--ink)!important;border-color:var(--sun)!important}
+.look{background:var(--paper);border-color:var(--line)}
+.card{background:var(--paper)}
+.wx-temp{font-family:var(--f-display);font-weight:400;letter-spacing:0}
+.alert.cold{background:#2E2710;color:var(--charcoal)}
+input,select,textarea{color-scheme:dark}
+.avatar{background:var(--sun)!important;color:var(--ink)!important}
+@media (max-width:760px){
+    nav.tabs{background:rgba(26,23,20,.97)}
+    nav.tabs a[aria-current="page"]{background:var(--sun);color:var(--ink)}
+}
+/* welcome screen: full-bleed photo collage behind the sheet */
+.scrim.welcome{background:linear-gradient(rgba(15,13,11,.55),rgba(15,13,11,.9)),var(--welcome-img) center/cover;place-items:center}
+.scrim.welcome .sheet{background:rgba(26,23,20,.92);backdrop-filter:blur(10px);border:1px solid var(--line)}
+.scrim.welcome h2{font-size:44px}
+@media (max-width:760px){.scrim.welcome{place-items:end center}}
+.item .ph{background:radial-gradient(circle at 50% 40%,#2E2822,#1A1714)}
+.item .ph img{width:100%;height:100%;object-fit:contain;padding:9%;filter:drop-shadow(0 8px 14px rgba(0,0,0,.45))}

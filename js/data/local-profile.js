@@ -26,9 +26,9 @@ function genderOptions(sel){
 
 function openLocalWelcome(){
     const ov=$("#overlay");
-    ov.innerHTML=`<div class="scrim" id="auth-scrim"><form class="sheet auth-sheet" id="local-form">
+    ov.innerHTML=`<div class="scrim welcome" id="auth-scrim" style="--welcome-img:url(https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=70)"><form class="sheet auth-sheet" id="local-form">
         <div><div class="eyebrow">AGORA · personal wardrobe</div><h2>Welcome to AGORA</h2>
-        <p style="margin:4px 0;color:var(--muted)">Your wardrobe is saved in this browser. No account needed. Next, add photos of a few tops, bottoms and shoes.</p></div>
+        <p style="margin:6px 0 0;color:var(--muted)">No account needed. Your wardrobe is saved in this browser. Next, you’ll add photos of a few tops, bottoms and shoes.</p></div>
         <label class="field">Your name<input id="local-name" maxlength="24" autocomplete="nickname" placeholder="e.g. Imran" required></label>
         <label class="field">Mannequin and looks<select id="local-gender">${genderOptions("female")}</select></label>
         <label class="field">Your city, for the weather<select id="local-city">${Object.entries(CITIES).map(([k,c])=>`<option value="${k}" ${k==="ansan"?"selected":""}>${c.name}</option>`).join("")}</select></label>
