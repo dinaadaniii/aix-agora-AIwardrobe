@@ -23,6 +23,25 @@ Landing-page photos are free-licence images from [Unsplash](https://unsplash.com
 
 Weather is a live 16-day forecast from [Open-Meteo](https://open-meteo.com/) (free, no API key), cached in the browser for 3 hours. If it can't be reached, or for days beyond the forecast, AGORA falls back to its built-in Gyeonggi climate model and says so on the weather card.
 
+## AI features (Gemini)
+
+Two optional AI features run through a small Vercel Function, `api/gemini.js`, so the Gemini API key never reaches the browser:
+
+- **Auto-tag with AI** (Closet → Add clothing): suggests each photo's type, name, pattern and style tags.
+- **Ask the AI stylist** (Today → a look → Pieces & why): a short note on how to wear that outfit today.
+
+Both use `gemini-3.1-flash-lite`, which has a free tier. The function only accepts these two jobs, builds the prompts itself, rejects requests from other websites and limits each visitor to 40 calls per 10 minutes. If the key is missing, or you're on a plain local server, the AI buttons stay hidden and the rest of AGORA works as normal.
+
+**Setup (once, by whoever owns the Vercel project):**
+
+1. Create a free API key at <https://aistudio.google.com/app/apikey>.
+2. In Vercel: Project → Settings → Environment Variables, add `GEMINI_API_KEY` with that key (Production and Preview).
+3. Redeploy. Optional: set `GEMINI_MODEL` to use a different Gemini model.
+
+To test AI locally, run `npx vercel dev` instead of `py -m http.server` (needs Node.js and `vercel link` to the project). Never put the key in any file in this repository.
+
+On the free tier, Google may use what you send to improve its products, so demo with photos of your own clothes.
+
 ## Run it locally
 
 You need Python 3 and a modern browser (Chrome recommended). From the project folder:
@@ -63,9 +82,11 @@ js/
   app/state.js           app state, saving, view switching
   views/                 today, tryon, closet, plan (week + calendar), insights
   cloud/supabase.js      Supabase login and cloud sync (off for now)
+  ai/gemini.js           AI auto-tagging and stylist notes (browser side)
   main.js                routing and startup
   landing.js             landing page interactions and demo
   photos.js              Unsplash photo list
+api/gemini.js            Vercel Function that calls Gemini with the secret key
 archive/                 earlier single-file versions, for reference
 ```
 

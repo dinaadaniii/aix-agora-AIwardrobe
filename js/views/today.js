@@ -70,6 +70,7 @@ function renderLooks(ctx,keep){
     for(const b of $$(".wear",box))b.onclick=()=>wear(+b.dataset.card,ctx);
     for(const b of $$(".detbtn",box))b.onclick=()=>{const i=+b.dataset.det,card=b.closest(".look"),open=!card.classList.contains("open");card.classList.toggle("open",open);b.setAttribute("aria-expanded",open);if(open)S.openDet.add(i);else S.openDet.delete(i)};
     wireLooksUI(ctx,keep);
+    wireAINotes(ctx);
     dressPending();
 }
 function fitPct(sc){return clamp(Math.round(sc),40,99)}

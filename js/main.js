@@ -7,7 +7,7 @@ function loadScript(src){return new Promise((res,rej)=>{const s=document.createE
 (async function boot(){
     await DB.open();
     const lab=$(".ai-model-lab");if(lab)lab.hidden=!(AGORA_CONFIG.SUPABASE_ENABLED&&AGORA_CONFIG.AI_TRYON_ENABLED);
-    if(!AGORA_CONFIG.SUPABASE_ENABLED){await startLocal();}
+    if(!AGORA_CONFIG.SUPABASE_ENABLED){await startLocal();AI.check();}
     else try{
         await loadScript(AGORA_CONFIG.SUPABASE_JS_CDN);
         sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});

@@ -77,7 +77,7 @@ function openItemSheet(edit){
    <div class="field">Style tags (optional, defaults come from the type)<div class="chips" id="ftags">${STYLE_TAGS.map(t=>`<button type="button" class="chip" data-t="${t}" aria-pressed="${(it.tags||[]).includes(t)}">${t}</button>`).join("")}</div></div>
    <label style="display:flex;gap:8px;align-items:center;font-size:14px" id="kbrow" ${it.img?"":"hidden"}><input type="checkbox" id="fkeep" ${it.keepBg?"checked":""}> Use the full photo on the mannequin (if the dressed piece looks cut wrongly)</label>
    <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="fsuede" ${it.suede?"checked":""}> Suede or delicate (avoid on rainy days)</label>
-   <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button type="button" class="btn ghost" id="aitag" hidden>Auto-tag with AI</button><button type="button" class="btn ghost" id="fcancel">Cancel</button><button class="btn terra" type="submit">${edit?"Save changes":"Add to closet"}</button></div></form></div>`;
+   <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button type="button" class="btn ghost" id="aitag" hidden title="Sends the photo to Google Gemini to suggest type, name and pattern.">✦ Auto-tag with AI</button><button type="button" class="btn ghost" id="fcancel">Cancel</button><button class="btn terra" type="submit">${edit?"Save changes":"Add to closet"}</button></div></form></div>`;
     const close=()=>ov.innerHTML="";$("#fcancel").onclick=close;$("#scrim").onclick=e=>{if(e.target.id==="scrim")close()};
     const autoName=()=>{if(!named)$("#fname").value=colorName($("#fcolor").value)+" "+TYPES[$("#ftype").value].label.toLowerCase()};
     $("#fname").oninput=()=>named=true;$("#ftype").onchange=autoName;$("#fcolor").oninput=e=>{$("#fcname").textContent=colorName(e.target.value);autoName()};
@@ -90,7 +90,7 @@ function openItemSheet(edit){
         try{const r=await S.caps.sample.json(`This is a flat photo of one clothing item for a wardrobe app. Reply with only JSON: {"type": one of ${JSON.stringify(Object.keys(TYPES))}, "name": short name like "Grey crewneck knit", "pattern": one of ${JSON.stringify(PATTERNS)}, "tags": up to 3 of ${JSON.stringify(STYLE_TAGS)}, "suede": boolean}`,{images:[photo.blob],modelTier:"quick"});
             if(r&&TYPES[r.type]){$("#ftype").value=r.type}if(r&&r.name){$("#fname").value=String(r.name).slice(0,40);named=true}if(r&&PATTERNS.includes(r.pattern))$("#fpat").value=r.pattern;
             if(r&&Array.isArray(r.tags))for(const b of $$("#ftags .chip"))b.setAttribute("aria-pressed",r.tags.includes(b.dataset.t));if(r&&typeof r.suede==="boolean")$("#fsuede").checked=r.suede;out.textContent="Tagged by AI. Check and adjust.";
-        }catch(e){out.textContent=e&&e.code==="not_granted"?"AI tagging was declined. Tag it by hand.":"AI tagging isn't available right now. Tag it by hand.";if(e&&["not_granted","sampling_disabled","images_unavailable"].includes(e.code))$("#aitag").hidden=true}
+        }catch(e){out.textContent=e&&e.code==="not_granted"?"AI tagging was declined. Tag it by hand.":"AI is busy or offline right now. Tag it by hand.";if(e&&["not_granted","sampling_disabled","images_unavailable"].includes(e.code))$("#aitag").hidden=true}
         $("#aitag").disabled=false};
     if(!edit)autoName();
     $("#itemform").onsubmit=async e=>{e.preventDefault();
@@ -109,7 +109,7 @@ function openAddSheet(){
    <div class="drop" id="bdrop"><p style="margin:0">Lay each piece flat on a plain surface and photograph it from above. Pick several photos at once, up to ${BATCH_MAX}, or drop them here.</p>
 <label class="btn ghost small" for="bphotos">Choose photos</label><input type="file" id="bphotos" accept="image/*" multiple class="vh"><div class="aiout" id="bstatus"></div></div>
    <div class="batch" id="batch"></div>
-   <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;align-items:center"><button type="button" class="btn ghost" id="bai" hidden>Auto-tag all with AI</button><button type="button" class="btn ghost" id="bcancel">Cancel</button><button class="btn terra" type="submit" id="bsave" disabled>Add to closet</button></div></form></div>`;
+   <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;align-items:center"><button type="button" class="btn ghost" id="bai" hidden>✦ Auto-tag all with AI</button><button type="button" class="btn ghost" id="bcancel">Cancel</button><button class="btn terra" type="submit" id="bsave" disabled>Add to closet</button></div></form></div>`;
     const close=()=>{if(!busy)ov.innerHTML=""};$("#bcancel").onclick=close;$("#scrim").onclick=e=>{if(e.target.id==="scrim")close()};
     const status=t=>$("#bstatus").textContent=t;
     const nameFor=r=>colorName(r.color)+" "+TYPES[r.type].label.toLowerCase();
@@ -121,7 +121,7 @@ function openAddSheet(){
   <span class="st wide">${r.cut?`<label class="kb"><input type="checkbox" data-kb="${i}" ${r.keepBg?"checked":""}> Use the full photo on the mannequin</label>`:"The full photo is used: the piece couldn't be separated from its background."} ${esc(r.note||"")}</span></div>
   <button type="button" class="x" data-rm="${i}" aria-label="Remove photo ${i+1}">×</button></div>`).join("");
         $("#bsave").disabled=!rows.length||busy;$("#bsave").textContent=rows.length>1?`Add ${rows.length} pieces`:"Add to closet";
-        $("#bai").hidden=!(S.caps.images&&rows.length);
+        $("#bai").hidden=!(S.caps.images&&rows.length);$("#bai").title="Sends the photos to Google Gemini to suggest type, name and pattern.";
         for(const el of $$("#batch [data-k]"))el.oninput=el.onchange=()=>{const r=rows[+el.closest(".brow").dataset.i],k=el.dataset.k;r[k]=el.value;
             if(k==="name")r.named=true;if(k!=="name"&&!r.named){r.name=nameFor(r);el.closest(".brow").querySelector('[data-k="name"]').value=r.name}
             if(k==="color")el.nextElementSibling.textContent=colorName(r.color)};

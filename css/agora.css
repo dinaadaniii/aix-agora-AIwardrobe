@@ -594,3 +594,11 @@ body.noscroll{overflow:hidden}
     .f-looks .looks>.look,.lookdet,.drawer-panel,.drawer-scrim,.occard,.occard::before{transition:none}
 }
 .flow{grid-template-columns:minmax(0,1fr)}.fstep{min-width:0}
+
+/* AI stylist */
+.ainote{margin:6px 0 12px}
+.aibtn{border:1px dashed var(--sun);background:rgba(255,206,31,.08);color:var(--sun);border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;cursor:pointer;width:100%;text-align:left}
+.aibtn:hover:not(:disabled){background:rgba(255,206,31,.16)}
+.aibtn:disabled{opacity:.7;cursor:progress}
+.ainote p{background:rgba(255,206,31,.08);border-left:3px solid var(--sun);border-radius:0 12px 12px 0;padding:10px 14px;font-size:15px;line-height:1.5;animation:stepIn .4s ease both}
+.ainote p b{display:block;color:var(--sun);font-size:12px;margin-bottom:2px}
