@@ -8,7 +8,9 @@ Live site: deployed on Vercel from the `main` branch.
 
 ## Design
 
-Cloud-grey background, denim-indigo text and one raincoat-yellow accent for primary actions, set in Bricolage Grotesque. Colours and fonts are CSS variables at the top of `css/agora.css` (with a dark mode) and `css/landing.css`.
+Espresso black, bone white and signal yellow, with Anton for headlines and Plus Jakarta Sans for text. Dashed "stitch" lines are the recurring pattern. Colours and fonts are CSS variables at the top of `css/agora.css` (app) and `css/landing.css` (landing page).
+
+Landing-page photos are free-licence images from [Unsplash](https://unsplash.com/license), listed in `js/photos.js` and loaded from images.unsplash.com.
 
 ## Features
 
@@ -39,7 +41,7 @@ Then open <http://localhost:8000> for the landing page, or <http://localhost:800
 No build step: plain HTML, CSS and JavaScript files, loaded in order by `index.html`.
 
 ```text
-index.html               landing page (with a live demo of the recommender)
+index.html               landing page: photo walls, live demo of the recommender, scroll effects
 app.html                 the app: shell and page markup
 vercel.json              Vercel settings (clean URLs, so the app is at /app; old /AGORA.html redirects there)
 favicon.svg
@@ -62,7 +64,8 @@ js/
   views/                 today, tryon, closet, plan (week + calendar), insights
   cloud/supabase.js      Supabase login and cloud sync (off for now)
   main.js                routing and startup
-  landing.js             landing page demo
+  landing.js             landing page interactions and demo
+  photos.js              Unsplash photo list
 archive/                 earlier single-file versions, for reference
 ```
 

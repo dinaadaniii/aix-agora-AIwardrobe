@@ -1,0 +1,9 @@
+"use strict";
+/* AGORA · free-licence photos from Unsplash (unsplash.com/license), hotlinked from images.unsplash.com */
+const PH=(id,w=800)=>`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
+const PHOTOS={
+    flat:["1467043237213-65f2da53396f","1586084611164-a9accaeab607","1525507119028-ed4c629a60a3","1632469188022-b5db09a70fbc","1614676471928-2ed0ad1061a4","1731936757642-09bccaf8b495","1556905055-8f358a7a47b2"],
+    rack:["1603400521630-9f2de124b33b","1551232864-3f0890e580d9","1489987707025-afc232f7ea0f","1490481651871-ab68de25d43d","1441984904996-e0b6ba687e04"],
+    street:["1539109136881-3be0616acf4b","1708242355178-d8c929b01a9d","1634921276069-c24ba5d6b35c","1748696147482-413d1e29ed8f","1682751718564-63d400311fd0"],
+    rain:["1632693217835-b482d9ca9ba0","1520699697851-3dc68aa3a474","1576514864427-f0809d2b66eb"],
+};
