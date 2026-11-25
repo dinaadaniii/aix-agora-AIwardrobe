@@ -189,9 +189,14 @@ function topRow(G){for(let y=0;y<G.H;y++){const[l]=rowExt(G,y);if(l>=0)return y}
 function dressTop(G,it,role,g,flags){
     const lm=LM[g],isDress=role==="dress",cols=torsoCols(G,isDress?.22:.62,isDress?.36:.9);if(!cols)return null;
     const[bx0,bx1]=cols,bw=Math.max(4,bx1-bx0);
-    const Tw=lm.shW*(role==="outer"?1.14:role==="inner"?1.0:isDress?.98:1.05),k=Tw/bw;
+    /* Different garment cuts need different shoulder widths. A single scale made
+       padded jackets too narrow and some blazers/hoodies sit too low or too small. */
+    const fitWidth={tee:1.04,longsleeve:1.05,shirt:1.06,blouse:1.04,knit:1.09,turtleneck:1.07,cardigan:1.10,sweatshirt:1.12,hoodie:1.15,sporttop:1.02,
+        blazer:1.18,jacket:1.22,padding:1.34,longpadding:1.30,windbreaker:1.20,trench:1.20,coat:1.22};
+    const baseWidth=fitWidth[it.type]||(role==="outer"?1.18:isDress?.98:1.05);
+    const Tw=lm.shW*(role==="inner"?1.02:baseWidth),k=Tw/bw;
     let sr=topRow(G);for(let y=sr;y<G.H*.5;y++){const[l,r]=rowExt(G,y);if(l>=0&&r-l>=bw*.8){sr=y;break}}
-    const shY=lm.neck+(g==="male"?9:7)-(role==="outer"?3:role==="inner"?-2:0);
+    const shY=lm.neck+(g==="male"?9:7)-(role==="outer"?1:role==="inner"?-2:0);
     const ox=120-(bx0+bw/2)*k,oy=shY-sr*k,h=G.H*k,[c,x]=unitCanvas();
     x.drawImage(G.c,ox,oy,G.W*k,h);
     x.globalCompositeOperation="destination-out";
@@ -216,7 +221,10 @@ function dressBottom(G,it,g){
     if(!ws.length)return null;const md=a=>a.slice().sort((p,q)=>p-q)[a.length>>1],ww=Math.max(4,md(ws)),cx=md(cs);
     let by=G.H-1;while(by>ty&&rowExt(G,by)[0]<0)by--;
     const skirt=["miniskirt","midiskirt","shorts"].includes(it.type),kw=lm.shW*(skirt?.92:.88)/ww,kl=(lm.ankle+10-(lm.waist-6))/Math.max(1,by-ty);
-    const k=skirt?kw:Math.pow(kw,.35)*Math.pow(kl,.65),[c,x]=unitCanvas();
+    /* Keep trouser scaling close to its measured waist width. The previous
+       vertical-length-heavy blend could stretch wide/short bottoms off the hips. */
+    const rawK=skirt?kw:Math.pow(kw,.72)*Math.pow(kl,.28);
+    const k=skirt?rawK:clamp(rawK,kw*.88,kw*1.12),[c,x]=unitCanvas();
     x.drawImage(G.c,120-cx*k,lm.waist-6-ty*k,G.W*k,G.H*k);
     x.globalCompositeOperation="destination-out";x.fillRect(0,lm.floor+3,240,60);
     x.globalCompositeOperation="source-atop";const gh=x.createLinearGradient(120-ww*k/2,0,120+ww*k/2,0);gh.addColorStop(0,"rgba(0,0,0,.1)");gh.addColorStop(.3,"rgba(0,0,0,0)");gh.addColorStop(.7,"rgba(0,0,0,0)");gh.addColorStop(1,"rgba(0,0,0,.1)");x.fillStyle=gh;x.fillRect(0,0,240,510);

@@ -68,11 +68,78 @@ function renderLooks(ctx,keep){
     for(const b of $$(".piece",box))b.onclick=()=>{const k=b.dataset.card+":"+b.dataset.slot;S.openSwap=S.openSwap===k?null:k;renderLooks(ctx,true)};
     for(const b of $$(".swapopt",box))b.onclick=()=>{const i=+b.dataset.card,slot=b.dataset.slot,id=b.dataset.id;const realItems=wardrobeItems();const o=withSwap(S.shown[i],slot,id==="none"?null:realItems.find(x=>x.id===id));o.acc=pickAcc(o,ctx,realItems.filter(x=>T(x).cat==="acc"));o.sc=scoreOutfit(o,ctx);o.score=o.sc.score;o.key=okey(o);S.shown[i]=o;S.openSwap=null;renderLooks(ctx,true)};
     for(const b of $$(".wear",box))b.onclick=()=>wear(+b.dataset.card,ctx);
+
+    for (const b of $$('.feedback-btn', box)) {
+        b.onclick = async () => {
+            const i=+b.dataset.card, rating=b.dataset.feedback, o=S.shown[i];
+            if(!o)return;
+            const existing=(S.user.feedback||[]).find(f=>f.id===feedbackId(o,ctx));
+            if(rating==='like'&&existing?.rating==='like'){
+                await removeOutfitFeedback(i,ctx);
+                return;
+            }
+            if(rating==='like'){
+                await saveOutfitFeedback(i,'like',null,ctx);
+            }else{
+                S.feedbackReasonCard=S.feedbackReasonCard===i?null:i;
+                renderLooks(ctx,true);
+            }
+        };
+    }
+    for (const b of $$('.feedback-reason[data-feedback-reason]', box)) {
+        b.onclick=()=>saveOutfitFeedback(+b.dataset.card,'dislike',b.dataset.feedbackReason,ctx);
+    }
+    for(const b of $$('.feedback-clear',box))b.onclick=()=>removeOutfitFeedback(+b.dataset.feedbackClear,ctx);
     for(const b of $$(".detbtn",box))b.onclick=()=>{const i=+b.dataset.det,card=b.closest(".look"),open=!card.classList.contains("open");card.classList.toggle("open",open);b.setAttribute("aria-expanded",open);if(open)S.openDet.add(i);else S.openDet.delete(i)};
     wireLooksUI(ctx,keep);
     wireAINotes(ctx);
     dressPending();
 }
+
+const FEEDBACK_REASONS = [
+    ["not-my-style", "Not my style"],
+    ["dislike-colours", "Dislike colours"],
+    ["too-warm", "Too warm"],
+    ["too-cold", "Too cold"],
+    ["unsuitable-occasion", "Unsuitable occasion"]
+];
+
+function snapshotFeedbackFeatures(o){
+    return [o.inner,o.top,o.bottom,o.dress,o.outer,o.shoes,o.waist,...(o.acc||[])].filter(Boolean).map(item=>({
+        id:String(item.id),name:String(item.name||''),type:String(item.type||''),
+        category:String(T(item).cat||''),color:String(colorName(item.color)||''),
+        pattern:String(item.pattern||'solid'),tags:(pTags(item)||[]).map(x=>String(x).toLowerCase()).slice(0,8)
+    }));
+}
+function feedbackId(o,ctx){return[ctx.iso,S.occ||'class',S.vibe||'any',o.key].join('|')}
+async function saveOutfitFeedback(i,rating,reason,ctx){
+    const u=S.user,o=S.shown[i];if(!u||!o)return;
+    u.feedback=Array.isArray(u.feedback)?u.feedback:[];
+    const id=feedbackId(o,ctx),features=snapshotFeedbackFeatures(o);
+    const record={
+        id,rating,reason:reason||null,outfitKey:o.key,
+        itemIds:features.map(x=>x.id),features,
+        occasion:S.occ||'class',vibe:S.vibe||'any',
+        temperature:Math.round(ctx.feels*10)/10,rain:!!ctx.rain,
+        date:ctx.iso,timestamp:Date.now(),version:2
+    };
+    const existingIndex=u.feedback.findIndex(f=>f.id===id);
+    if(existingIndex>=0)u.feedback[existingIndex]=record;else u.feedback.push(record);
+    // Keep a bounded history while retaining recent preference signals.
+    if(u.feedback.length>200)u.feedback=u.feedback.slice(-200);
+    await save();S.feedbackReasonCard=null;
+    toast(rating==='like'?'Saved. AGORA will learn from this look.':'Thanks. AGORA will use this reason to improve similar recommendations.');
+    S.seen.clear();
+    renderLooks(ctx,true);
+}
+async function removeOutfitFeedback(i,ctx){
+    const u=S.user,o=S.shown[i];if(!u||!o)return;
+    const id=feedbackId(o,ctx);u.feedback=(u.feedback||[]).filter(f=>f.id!==id);
+    S.feedbackReasonCard=null;await save();S.seen.clear();
+    toast('Feedback removed. AGORA will no longer use this vote.');
+    renderLooks(ctx,true);
+}
+
 function fitPct(sc){return clamp(Math.round(sc),40,99)}
 function lookCard(o,i,ctx,worn){
     const u=S.user,realItems=wardrobeItems(),Wd=wearable(realItems);const ev=eveningOuter(o,ctx,realItems);
@@ -100,6 +167,14 @@ function lookCard(o,i,ctx,worn){
     else if(ev&&ev.none)extra+=`<div class="extra cold"><span>${ICON.cold}</span><span><b>Feels ${Math.round(ev.ef)}° tonight.</b> You have no outerwear saved yet. Add a jacket or padding to your closet.</span></div>`;
     if(umb)extra+=`<div class="extra rain"><span class="th">${umb===true?ICON.rain:thumb(umb)}</span><span><b>Umbrella:</b> ${umb===true?"bring one. There's none in your closet yet.":esc(umb.name)+"."} Rain ${pad(ctx.wx.rainStart)}:00–${pad(Math.min(24,ctx.wx.rainEnd))}:00.</span></div>`;
     const isWorn=worn.some(h=>h.key===o.key);
+
+    const feedbackList = u.feedback || [];
+    const currentFeedback = feedbackList.find(
+        f => f.id === feedbackId(o, ctx)
+    );
+
+    const showReason = S.feedbackReasonCard === i;
+
     const nm=x=>T(x).label.toLowerCase();
     const core=o.dress&&o.bottom?`${nm(o.dress)} over ${nm(o.bottom)}`:o.inner?`${nm(host)} over ${nm(o.inner)}`:host?(o.bottom?`${nm(host)} & ${nm(o.bottom)}`:nm(host)):"look";
     const title=o.outer?`${nm(o.outer)}, ${core}`:core;
@@ -107,7 +182,58 @@ function lookCard(o,i,ctx,worn){
     return`<article class="look ${S.openDet.has(i)||(S.openSwap&&S.openSwap.startsWith(i+":"))?"open":""}" data-i="${i}"><div class="alcove">${S.lookView==="flat"?`<div class="flatlay">${flat.map(p=>`<figure>${thumb(p)}<figcaption>${esc(p===o.inner?"Under":p===o.waist?"At waist":T(p).label)}</figcaption></figure>`).join("")}</div>`:mannequinSVG(o,i,{style:st,umbrella:umb,label:"Look "+(i+1)+": "+[o.outer,o.top,o.inner,o.dress,o.bottom,o.shoes].filter(Boolean).map(x=>x.name).join(", ")})}${o.waist&&S.lookView!=="flat"?`<span class="waistinset" title="Tied at the waist">${thumb(o.waist)}<i>tied at waist</i></span>`:""}<span class="badge">Look ${i+1}</span><span class="fit num" title="Fit score: weather, occasion, vibe and trend">${fitPct(o.score)} fit</span></div>
    <div class="lookbody"><h3>${esc(title.charAt(0).toUpperCase()+title.slice(1))}</h3><div class="lookdet" id="det-${i}"><ul class="pieces">${pieces}</ul>${tray}
    <ul class="why">${why.map(w=>`<li>${esc(w)}</li>`).join("")}${trend?`<li class="t">${esc(trend)}</li>`:""}${styleNotes(o,st).length?`<li class="s"><span><b style="font-weight:500">How to wear it:</b> ${esc(styleNotes(o,st).join(" "))}</span></li>`:""}</ul>${extra}</div>
-   <div class="lookfoot">${isWorn?`<span class="worn">✓ Saved for ${esc(dayLabel(ctx.iso).toLowerCase())}</span>`:`<button class="btn wear" data-card="${i}">Wear this look</button>`}<button type="button" class="detbtn" data-det="${i}" aria-expanded="${S.openDet.has(i)||!!(S.openSwap&&S.openSwap.startsWith(i+":"))}" aria-controls="det-${i}">Pieces &amp; why</button></div></div></article>`;
+   <div class="lookfoot">
+    ${isWorn
+        ? `<span class="worn">✓ Saved for ${esc(dayLabel(ctx.iso).toLowerCase())}</span>`
+        : `<button class="btn wear" data-card="${i}">Wear this look</button>`
+    }
+
+    <button type="button"
+        class="feedback-btn ${currentFeedback?.rating === "like" ? "selected" : ""}"
+        data-feedback="like"
+        data-card="${i}"
+        aria-pressed="${currentFeedback?.rating === "like" ? "true" : "false"}">
+        👍 Like
+    </button>
+
+    <button type="button"
+        class="feedback-btn ${currentFeedback?.rating === "dislike" ? "selected" : ""}"
+        data-feedback="dislike"
+        data-card="${i}"
+        aria-pressed="${currentFeedback?.rating === "dislike" ? "true" : "false"}">
+        👎 Dislike
+    </button>
+
+    <button type="button"
+        class="detbtn"
+        data-det="${i}"
+        aria-expanded="${S.openDet.has(i) || !!(S.openSwap && S.openSwap.startsWith(i + ":"))}"
+        aria-controls="det-${i}">
+        Pieces &amp; why
+    </button>
+</div>
+
+${showReason ? `
+    <div class="feedback-reasons">
+        <p>Why didn't you like this outfit?</p>
+        ${FEEDBACK_REASONS.map(([value, label]) => `
+            <button type="button" class="feedback-reason" data-feedback-reason="${value}" data-card="${i}">${label}</button>
+        `).join("")}
+        ${currentFeedback?.rating === "dislike" ? `<button type="button" class="feedback-reason feedback-clear" data-feedback-clear="${i}">Remove my feedback</button>` : ""}
+    </div>
+` : ""}
+
+${currentFeedback ? `
+    <p class="feedback-saved">
+        ${currentFeedback.rating === "like"
+        ? "✓ You liked this outfit"
+        : "✓ Feedback saved: " +
+        (FEEDBACK_REASONS.find(r => r[0] === currentFeedback.reason)?.[1] || "Disliked")
+    }
+    </p>
+` : ""}
+
+</div></article>`;
 }
 async function wear(i,ctx){
     const o=S.shown[i],u=S.user,secs=Math.round((Date.now()-S.decisionStart)/1000);

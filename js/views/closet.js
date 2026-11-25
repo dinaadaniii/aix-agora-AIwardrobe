@@ -30,17 +30,24 @@ function cutout(src){
     const q=new Int32Array(N);let qh=0,qt=0,mask,TT;
     const nbs=(p,px,py)=>[px>0?p-1:-1,px<W-1?p+1:-1,py>0?p-W:-1,py<H-1?p+W:-1];
     const Gm=new Uint8Array(N);for(let i=0;i<N;i++){const px=i%W;let gm=0;if(px<W-1)gm=dP(i,i+1);if(i+W<N)gm=Math.max(gm,dP(i,i+W));Gm[i]=gm>255?255:gm}
-    const flood=tt=>{const m=new Uint8Array(N);qh=qt=0;const lim=Math.min(9,tt*.5);
-        const seed=i=>{if(!m[i]&&dB(i)<tt*1.4){m[i]=1;q[qt++]=i}};
+    /* Conservative border flood: do not classify a pale garment as background just
+       because its colour is close to a white/cream photo surface. Only pixels that
+       are connected to the image border and remain very close to the sampled
+       background are removed. */
+    const flood=tt=>{const m=new Uint8Array(N);qh=qt=0;const lim=Math.min(4,tt*.24);
+        const seed=i=>{if(!m[i]&&dB(i)<tt*1.04){m[i]=1;q[qt++]=i}};
         for(let i=0;i<W;i++){seed(i);seed((H-1)*W+i)}for(let j=0;j<H;j++){seed(j*W);seed(j*W+W-1)}
-        while(qh<qt){const p=q[qh++],px=p%W,py=(p/W)|0;for(const n of nbs(p,px,py)){if(n<0||m[n])continue;const v=dB(n);if(Gm[n]>14&&v>tt*.5)continue;if(v<tt||(v<tt*3&&dP(n,p)<lim)){m[n]=1;q[qt++]=n}}}
+        while(qh<qt){const p=q[qh++],px=p%W,py=(p/W)|0;for(const n of nbs(p,px,py)){if(n<0||m[n])continue;const v=dB(n);
+            /* A strong local edge is a garment boundary: stop the flood there. */
+            if(Gm[n]>12&&v>tt*.32)continue;
+            if(v<tt||(v<tt*1.45&&dP(n,p)<lim)){m[n]=1;q[qt++]=n}
+        }}
         let bgc=0;for(let i=0;i<N;i++)bgc+=m[i];return{m,fgf:1-bgc/N}};
-    for(const tt of[clamp(24+sd*1.8,24,64),16,10,6]){const r=flood(tt);if(r.fgf>.05&&r.fgf<.92){mask=r.m;TT=tt;break}}
+    const first=clamp(10+sd*.38,10,18);
+    for(const tt of[first,9,7,5,3]){const r=flood(tt);if(r.fgf>.025&&r.fgf<.97){mask=r.m;TT=tt;break}}
     if(!mask)return null;
-    /* enclosed background pockets (e.g. between a sleeve and the body) */
-    const seen=new Uint8Array(N);
-    for(let i=0;i<N&&TT>=24;i++){if(mask[i]||seen[i]||dB(i)>=TT*.35)continue;qh=qt=0;q[qt++]=i;seen[i]=1;while(qh<qt){const p=q[qh++],px=p%W,py=(p/W)|0;for(const n of nbs(p,px,py))if(n>=0&&!mask[n]&&!seen[n]&&dB(n)<TT*.35){seen[n]=1;q[qt++]=n}}
-        if(qt>N*.004)for(let k=0;k<qt;k++)mask[q[k]]=1}
+    /* Do not erase enclosed pale areas: they may be white fabric, highlights,
+       quilting or the inside of a printed garment. Preserve them as foreground. */
     /* keep the garment (and a second shoe), drop specks */
     const lab=new Int32Array(N),sizes=[0];let nl=0;
     for(let i=0;i<N;i++){if(mask[i]||lab[i])continue;nl++;qh=qt=0;q[qt++]=i;lab[i]=nl;while(qh<qt){const p=q[qh++],px=p%W,py=(p/W)|0;for(const n of nbs(p,px,py))if(n>=0&&!mask[n]&&!lab[n]){lab[n]=nl;q[qt++]=n}}sizes.push(qt)}
@@ -48,8 +55,10 @@ function cutout(src){
     let fg=0,x0=W,y0=H,x1=0,y1=0,cr=0,cg=0,cb=0,cn=0;
     for(let i=0;i<N;i++){if(!mask[i]&&sizes[lab[i]]<big*.08)mask[i]=1;if(!mask[i]){fg++;const px=i%W,py=(i/W)|0;if(px<x0)x0=px;if(px>x1)x1=px;if(py<y0)y0=py;if(py>y1)y1=py}}
     if(fg<N*.03||fg>N*.96)return null;
-    for(let i=0;i<N;i++){const k=i*4;if(mask[i]){d[k+3]=0;continue}const px=i%W,py=(i/W)|0;let edge=false;for(const n of nbs(i,px,py))if(n<0||mask[n]){edge=true;break}
-        if(edge)d[k+3]=150;else{cr+=d[k];cg+=d[k+1];cb+=d[k+2];cn++}}
+    for(let i=0;i<N;i++){const k=i*4;if(mask[i]){d[k+3]=0;continue}
+        /* Keep garment pixels fully opaque. The old 220 alpha made every cut-out
+           garment edge visibly washed out, especially white and pastel fabrics. */
+        d[k+3]=255;cr+=d[k];cg+=d[k+1];cb+=d[k+2];cn++}
     x.putImageData(id,0,0);const bw=x1-x0+3,bh=y1-y0+3;const o=document.createElement("canvas");o.width=bw;o.height=bh;o.getContext("2d").drawImage(c,x0-1,y0-1,bw,bh,0,0,bw,bh);
     let out=o.toDataURL("image/webp",.88);if(!out.startsWith("data:image/webp"))out=o.toDataURL("image/png");
     return{src:out,aspect:bh/bw,color:cn?rgbHex(cr/cn,cg/cn,cb/cn):null};
@@ -62,9 +71,9 @@ async function processPhoto(file){
     let color=cut&&cut.color;if(!color){const p=x.getImageData(Math.floor(w*.4),Math.floor(h*.4),Math.max(1,Math.floor(w*.2)),Math.max(1,Math.floor(h*.2))).data;let r=0,g=0,b=0,n=0;for(let i=0;i<p.length;i+=16){r+=p[i];g+=p[i+1];b+=p[i+2];n++}color=rgbHex(r/n,g/n,b/n)}
     return{img,imgAspect:h/w,cut:cut&&cut.src,cutAspect:cut&&cut.aspect,color,blob:await new Promise(r=>c.toBlob(r,"image/jpeg",.85))};
 }
-function applyPhoto(it,ph,keepBg){it.cutV=2;it.pv=(it.pv||0)+1;it.img=ph.img;it.imgAspect=ph.imgAspect;it.cut=ph.cut||null;it.cutAspect=ph.cutAspect||null;it.cutTried=true;it.keepBg=!!keepBg||!ph.cut;delete it.swatch;it.sample=false}
-async function migrateCutouts(){const u=S.user;const todo=u.items.filter(i=>i.img&&i.cutV!==2);if(!todo.length)return;let n=0;
-    for(const it of todo){try{const im=await loadImg(it.img);const c=document.createElement("canvas");c.width=im.width;c.height=im.height;c.getContext("2d").drawImage(im,0,0);it.imgAspect=im.height/im.width;const r=cutout(c);it.cut=r?r.src:null;it.cutAspect=r?r.aspect:null;if(r)n++}catch(e){}it.cutTried=true;it.cutV=2;it.pv=(it.pv||0)+1;delete it.swatch}
+function applyPhoto(it,ph,keepBg){it.cutV=4;it.pv=(it.pv||0)+1;it.img=ph.img;it.imgAspect=ph.imgAspect;it.cut=ph.cut||null;it.cutAspect=ph.cutAspect||null;it.cutTried=true;it.keepBg=!!keepBg||!ph.cut;delete it.swatch;it.sample=false}
+async function migrateCutouts(){const u=S.user;const todo=u.items.filter(i=>i.img&&i.cutV!==4);if(!todo.length)return;let n=0;
+    for(const it of todo){try{const im=await loadImg(it.img);const c=document.createElement("canvas");c.width=im.width;c.height=im.height;c.getContext("2d").drawImage(im,0,0);it.imgAspect=im.height/im.width;const r=cutout(c);it.cut=r?r.src:null;it.cutAspect=r?r.aspect:null;it.keepBg=!r;if(r)n++}catch(e){it.keepBg=true}it.cutTried=true;it.cutV=4;it.pv=(it.pv||0)+1;delete it.swatch}
     if(S.user===u)await save();else await DB.put(u);if(S.user===u){render();if(n)toast(`Re-prepared ${n} saved photo${n>1?"s":""} for the mannequin.`)}}
 function typeOptions(sel){return CATS.map(([k,l])=>`<optgroup label="${l}">${Object.entries(TYPES).filter(([,t])=>t.cat===k).map(([tk,t])=>`<option value="${tk}" ${tk===sel?"selected":""}>${t.label}</option>`).join("")}</optgroup>`).join("")}
 function openItemSheet(edit){

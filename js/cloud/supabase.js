@@ -34,6 +34,7 @@ async function cloudSave(user){
         schedule:user.schedule||{},
         history:user.history||[],
         prefs:user.prefs||{},
+        feedback:user.feedback||[],
         modelImagePath,
         tryOnResults:(user.tryOnResults||[]).map(r=>({id:r.id,path:r.path,createdAt:r.createdAt,garments:r.garments||[]}))
     };
@@ -262,6 +263,7 @@ async function activateCloudUser(authUser){
         schedule:data.schedule||legacy?.schedule||{},
         history:data.history||legacy?.history||[],
         prefs:data.prefs||legacy?.prefs||{},
+        feedback:data.feedback||legacy?.feedback||[],
         modelImage,
         tryOnResults,
         _cloudModelImagePath:data.modelImagePath||null,
@@ -482,6 +484,7 @@ async function openLogin(){
                 schedule:S.user.schedule||{},
                 history:S.user.history||[],
                 prefs:S.user.prefs||{},
+                feedback:S.user.feedback||[],
                 modelImagePath:S.user._cloudModelImagePath||null
             };
 
