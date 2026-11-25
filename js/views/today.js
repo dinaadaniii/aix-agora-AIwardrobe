@@ -127,6 +127,12 @@ async function saveOutfitFeedback(i,rating,reason,ctx){
     if(existingIndex>=0)u.feedback[existingIndex]=record;else u.feedback.push(record);
     // Keep a bounded history while retaining recent preference signals.
     if(u.feedback.length>200)u.feedback=u.feedback.slice(-200);
+    u.favourites=Array.isArray(u.favourites)?u.favourites:[];
+    if(rating==='like'){
+        const slotIds={inner:o.inner?.id||null,top:o.top?.id||null,bottom:o.bottom?.id||null,dress:o.dress?.id||null,outer:o.outer?.id||null,shoes:o.shoes?.id||null,waist:o.waist?.id||null,acc:(o.acc||[]).map(x=>x.id)};
+        const fav={id,feedbackId:id,outfitKey:o.key,slotIds,itemIds:features.map(x=>x.id),features,occasion:S.occ||'class',vibe:S.vibe||'any',temperature:Math.round(ctx.feels*10)/10,rain:!!ctx.rain,date:ctx.iso,savedAt:Date.now()};
+        const fi=u.favourites.findIndex(f=>f.feedbackId===id);if(fi>=0)u.favourites[fi]=fav;else u.favourites.push(fav);
+    }else u.favourites=u.favourites.filter(f=>f.feedbackId!==id);
     await save();S.feedbackReasonCard=null;
     toast(rating==='like'?'Saved. AGORA will learn from this look.':'Thanks. AGORA will use this reason to improve similar recommendations.');
     S.seen.clear();
@@ -135,6 +141,7 @@ async function saveOutfitFeedback(i,rating,reason,ctx){
 async function removeOutfitFeedback(i,ctx){
     const u=S.user,o=S.shown[i];if(!u||!o)return;
     const id=feedbackId(o,ctx);u.feedback=(u.feedback||[]).filter(f=>f.id!==id);
+    u.favourites=(u.favourites||[]).filter(f=>f.feedbackId!==id);
     S.feedbackReasonCard=null;await save();S.seen.clear();
     toast('Feedback removed. AGORA will no longer use this vote.');
     renderLooks(ctx,true);

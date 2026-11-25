@@ -14,7 +14,7 @@ function setView(v){if(v==="calendar"){calendarSelected=S.date||todayISO();const
 function render(){
     if(!S.user)return;$("#uname").textContent=S.user.username;$("#uav").textContent=S.user.username[0];
     renderBanner();
-    if(S.view==="today")renderToday();if(S.view==="closet")renderCloset();if(S.view==="week")renderWeek();if(S.view==="calendar")renderCalendar();if(S.view==="tryon")renderTryOn();
+    if(S.view==="today")renderToday();if(S.view==="favourites")renderFavourites();if(S.view==="closet")renderCloset();if(S.view==="week")renderWeek();if(S.view==="calendar")renderCalendar();if(S.view==="tryon")renderTryOn();
 }
 function renderBanner(){
     const u=S.user;const slot=$("#bannerslot");

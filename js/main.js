@@ -1,7 +1,7 @@
 "use strict";
 /* AGORA · Routing and boot */
 /* ---------- routing & boot ---------- */
-function route(){const v=(location.hash||"#today").slice(1);setView(["today","closet","week","calendar","tryon"].includes(v)?v:"today")}
+function route(){const v=(location.hash||"#today").slice(1);setView(["today","favourites","closet","week","calendar","tryon"].includes(v)?v:"today")}
 window.addEventListener("hashchange",route);
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(new Error("Could not load "+src));document.head.appendChild(s)})}
 (async function boot(){
