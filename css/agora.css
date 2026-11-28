@@ -670,3 +670,7 @@ header.top .avatar{background:var(--mast-accent)!important;color:var(--mast)!imp
 .scrim.welcome{background:linear-gradient(color-mix(in srgb,var(--shade) 55%,transparent),color-mix(in srgb,var(--shade) 90%,transparent)),var(--welcome-img) center/cover}
 .flow-bg::after{background:radial-gradient(ellipse at 30% 40%,color-mix(in srgb,var(--shade) 55%,transparent),color-mix(in srgb,var(--shade) 94%,transparent) 70%)}
 .occard::after{background:linear-gradient(0deg,color-mix(in srgb,var(--shade) 92%,transparent) 12%,color-mix(in srgb,var(--shade) 15%,transparent) 60%)}
+
+/* dark mode: show the Today photo solid and darken it, so the maroon page doesn't show through */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .flow[data-step="hello"] .flow-bg,:root:not([data-theme="light"]) .flow[data-step="occ"] .flow-bg{opacity:1;filter:brightness(.85)}}
+:root[data-theme="dark"] .flow[data-step="hello"] .flow-bg,:root[data-theme="dark"] .flow[data-step="occ"] .flow-bg{opacity:1;filter:brightness(.85)}
