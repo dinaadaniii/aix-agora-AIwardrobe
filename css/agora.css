@@ -1,17 +1,17 @@
 /* AGORA app theme: espresso black, bone white, signal yellow; Anton headlines, Plus Jakarta Sans text. Layout: weather + choices on a left rail, three arched "alcoves" holding mannequins. */
 :root{
-    /* LIGHT MODE: studio grey and white, oxblood maroon, antique gold */
-    --linen:#F4F4F6; --paper:#FFFFFF; --sand:#EAEAEF; --line:#D3D3DB;
-    --terracotta:#541020; --clay:#541020; --clay-soft:#F6E4E8; --gold:#8C6732;
-    --sun-hover:#6E1A2B;
-    --charcoal:#1A1113; --muted:#736569; --ink-soft:#433438;
-    --olive:#2D6A4F; --rain:#2B6CB0; --warn:#A05E00;
-    --arch1:#E8E8EC; --arch2:#E0DFE3; --arch3:#E6E5EA;
-    --shadow:0 1px 0 rgba(26,17,19,.04),0 16px 34px -18px rgba(26,17,19,.25);
+    /* LIGHT MODE: white and soft grey, maroon ink, gold italics */
+    --linen:#F5F5F5; --paper:#FFFFFF; --sand:#ECECEC; --line:#800020;
+    --terracotta:#800020; --clay:#800020; --clay-soft:#F5E9EB; --gold:#7D5A1C;
+    --sun-hover:#600018;
+    --charcoal:#3C0008; --muted:#6E504B; --ink-soft:#5A2A30;
+    --olive:#2D6A4F; --rain:#2B6CB0; --warn:#8F5400;
+    --arch1:#EDEDED; --arch2:#E8E8E8; --arch3:#F0F0F0;
+    --shadow:0 1px 0 rgba(128,0,32,.04),0 16px 34px -18px rgba(128,0,32,.2);
     --f-display:"Anton","Impact","Arial Narrow Bold",sans-serif;
     --f-serif:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
     --f-body:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-    --sun:#541020; --ink:#FFFFFF;
+    --sun:#800020; --ink:#FFFFFF;
     color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
@@ -627,8 +627,8 @@ body.noscroll{overflow:hidden}
 /* ---------- editorial layer ---------- */
 /* titles: fashion serif, mixed case; italics carry the accent */
 h1,h2{font-family:var(--f-serif);font-weight:500;text-transform:none;letter-spacing:-.015em;line-height:1.02}
-h1 em,h2 em,.f-name{font-style:italic;font-weight:400;color:var(--terracotta)}
-.f-greet .f-name{color:var(--terracotta)}
+h1 em,h2 em,.f-name{font-style:italic;font-weight:400;color:var(--gold)}
+.f-greet .f-name{color:var(--gold)}
 /* short labels: small, spaced capitals */
 .btn,.chip,.userchip,nav.tabs a,label,.pill{letter-spacing:.12em;text-transform:uppercase;font-size:12px;font-weight:600}
 .eyebrow{letter-spacing:.22em;font-size:11px;font-weight:600}

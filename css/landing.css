@@ -1,9 +1,9 @@
 /* AGORA landing. Espresso black, bone white, signal yellow. Stitch lines (dashed) are the recurring pattern. */
 :root{
     /* LIGHT MODE */
-    --bg:#F4F4F6; --bg2:#EAEAEF; --card:#FFFFFF; --line:#D3D3DB;
-    --bone:#1A1113; --muted:#736569; --sun:#541020; --sun-2:#6E1A2B; --ink:#FFFFFF;
-    --accent:#541020; --gold:#8C6732;
+    --bg:#F5F5F5; --bg2:#ECECEC; --card:#FFFFFF; --line:#800020;
+    --bone:#3C0008; --muted:#7A5559; --sun:#800020; --sun-2:#600018; --ink:#FFFFFF;
+    --accent:#800020; --gold:#7D5A1C;
     --d:"Anton","Impact","Haettenschweiler","Arial Narrow Bold",sans-serif;
     --serif:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
     --f:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -264,7 +264,7 @@ main>section{padding-left:max(20px,calc((100vw - 1240px)/2));padding-right:max(2
 /* ---------- editorial layer ---------- */
 h2{font-family:var(--serif);font-weight:500;text-transform:none;letter-spacing:-.02em;line-height:1}
 .hero h1{font-family:var(--serif);font-weight:500;text-transform:none;letter-spacing:-.025em;line-height:.95}
-.hero h1 .l2{font-style:italic;font-weight:400}
+.hero h1 .l2{font-style:italic;font-weight:400;color:var(--gold)}
 .kicker{text-transform:uppercase;letter-spacing:.22em;font-size:11px;font-weight:600}
 .kicker::before{height:1px;background:var(--accent)}
 .btn{text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:600}
