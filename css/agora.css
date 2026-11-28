@@ -640,22 +640,22 @@ header.top{border-bottom:1px solid var(--line)}
 
 /* ================= LUXURY LAYER ================= */
 /* new colours: masthead, gold rule, gold button edge, photo shade */
-:root{--mast:#3C0008; --mast-ink:#FFFFFF; --mast-soft:#E9CBD1; --rule:#B8913A; --btn-edge:#D9B45A; --shade:var(--linen)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mast:#3C0008; --mast-ink:#F1E8E4; --mast-soft:#CDB9A5; --rule:#9E7A3E; --btn-edge:#B8913A; --shade:#000000}}
-:root[data-theme="dark"]{--mast:#3C0008; --mast-ink:#F1E8E4; --mast-soft:#CDB9A5; --rule:#9E7A3E; --btn-edge:#B8913A; --shade:#000000}
+:root{--mast:#3C0008; --mast-ink:#FFFFFF; --mast-soft:#E9CBD1; --mast-accent:#B8913A; --rule:#B8913A; --btn-edge:#D9B45A; --shade:var(--linen)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mast:#B8913A; --mast-ink:#3C0008; --mast-soft:#6B2A1E; --mast-accent:#3C0008; --rule:#9E7A3E; --btn-edge:#B8913A; --shade:#000000}}
+:root[data-theme="dark"]{--mast:#B8913A; --mast-ink:#3C0008; --mast-soft:#6B2A1E; --mast-accent:#3C0008; --rule:#9E7A3E; --btn-edge:#B8913A; --shade:#000000}
 
 /* 1 + 2. deep maroon masthead with a thin gold rule under it */
 header.top{background:var(--mast);color:var(--mast-ink);border-bottom:1px solid var(--rule)}
-header.top .brand b{color:var(--mast-ink)}
-header.top .brand b::after{background:var(--rule)}
+header.top .brand b{color:#FFFFFF}
+header.top .brand b::after{background:var(--mast-accent)}
 header.top .brand span{color:var(--mast-soft)}
 header.top .userchip,header.top .themetog{background:transparent;color:var(--mast-ink);border-color:color-mix(in srgb,var(--mast-ink) 45%,transparent)}
-header.top .avatar{background:var(--rule)!important;color:var(--mast)!important}
+header.top .avatar{background:var(--mast-accent)!important;color:var(--mast)!important}
 @media (min-width:761px){
     header.top nav.tabs a{color:var(--mast-soft)}
     header.top nav.tabs a:hover:not([aria-current]){background:transparent;color:var(--mast-ink)}
     /* 4. selected tab: gold underline instead of a filled box */
-    header.top nav.tabs a[aria-current="page"]{background:transparent;color:var(--mast-ink);box-shadow:inset 0 -2px 0 var(--rule)}
+    header.top nav.tabs a[aria-current="page"]{background:transparent;color:var(--mast-ink);box-shadow:inset 0 -2px 0 var(--mast-accent)}
 }
 @media (max-width:760px){nav.tabs{border-top:1px solid var(--rule)}}
 

@@ -274,14 +274,14 @@ h2{font-family:var(--serif);font-weight:500;text-transform:none;letter-spacing:-
 
 /* ================= LUXURY LAYER ================= */
 /* new colours: masthead, gold rule, gold button edge, photo shade */
-:root{--mast:#3C0008; --mast-ink:#FFFFFF; --mast-soft:#E9CBD1; --rule:#B8913A; --btn-edge:#D9B45A; --shade:var(--bg)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mast:#3C0008; --mast-ink:#F1E8E4; --mast-soft:#CDB9A5; --rule:#9E7A3E; --btn-edge:#B8913A; --shade:#000000}}
-:root[data-theme="dark"]{--mast:#3C0008; --mast-ink:#F1E8E4; --mast-soft:#CDB9A5; --rule:#9E7A3E; --btn-edge:#B8913A; --shade:#000000}
+:root{--mast:#3C0008; --mast-ink:#FFFFFF; --mast-soft:#E9CBD1; --mast-accent:#B8913A; --rule:#B8913A; --btn-edge:#D9B45A; --shade:var(--bg)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mast:#B8913A; --mast-ink:#3C0008; --mast-soft:#6B2A1E; --mast-accent:#3C0008; --rule:#9E7A3E; --btn-edge:#B8913A; --shade:#000000}}
+:root[data-theme="dark"]{--mast:#B8913A; --mast-ink:#3C0008; --mast-soft:#6B2A1E; --mast-accent:#3C0008; --rule:#9E7A3E; --btn-edge:#B8913A; --shade:#000000}
 
 /* 1 + 2. deep maroon masthead with a thin gold rule under it, gold rule above the footer */
 .nav,.nav.solid{background:var(--mast);border-bottom:1px solid var(--rule);backdrop-filter:none}
-.nav .wordmark{color:var(--mast-ink)}
-.nav .wordmark i{background:var(--rule)}
+.nav .wordmark{color:#FFFFFF}
+.nav .wordmark i{background:var(--mast-accent)}
 .nav nav a{color:var(--mast-soft)}
 .nav nav a:hover{color:var(--mast-ink)}
 .nav .themetog{color:var(--mast-ink);border-color:color-mix(in srgb,var(--mast-ink) 45%,transparent)}
