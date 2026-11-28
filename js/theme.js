@@ -13,7 +13,7 @@
         if(theme==="light"||theme==="dark")root.dataset.theme=theme;
         else delete root.dataset.theme;
         const meta=document.querySelector('meta[name="theme-color"]');
-        if(meta)meta.content=current()==="dark"?"#0E0B0C":"#F4F4F6";
+        if(meta)meta.content=current()==="dark"?"#3C0008":"#F4F4F6";
         document.querySelectorAll("[data-theme-toggle]").forEach(btn=>{
             const dark=current()==="dark";
             btn.setAttribute("aria-label",dark?"Switch to light mode":"Switch to dark mode");
