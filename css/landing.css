@@ -271,3 +271,38 @@ h2{font-family:var(--serif);font-weight:500;text-transform:none;letter-spacing:-
 .nav nav a{text-transform:uppercase;letter-spacing:.14em;font-size:12px}
 .pill{text-transform:uppercase;letter-spacing:.14em;font-size:11px}
 .themetog{border-radius:0}
+
+/* ================= LUXURY LAYER ================= */
+/* new colours: masthead, gold rule, gold button edge, photo shade */
+:root{--mast:#3C0008; --mast-ink:#FFFFFF; --mast-soft:#E9CBD1; --rule:#B8913A; --btn-edge:#D9B45A; --shade:var(--bg)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mast:#3C0008; --mast-ink:#F1E8E4; --mast-soft:#CDB9A5; --rule:#9E7A3E; --btn-edge:#B8913A; --shade:#000000}}
+:root[data-theme="dark"]{--mast:#3C0008; --mast-ink:#F1E8E4; --mast-soft:#CDB9A5; --rule:#9E7A3E; --btn-edge:#B8913A; --shade:#000000}
+
+/* 1 + 2. deep maroon masthead with a thin gold rule under it, gold rule above the footer */
+.nav,.nav.solid{background:var(--mast);border-bottom:1px solid var(--rule);backdrop-filter:none}
+.nav .wordmark{color:var(--mast-ink)}
+.nav .wordmark i{background:var(--rule)}
+.nav nav a{color:var(--mast-soft)}
+.nav nav a:hover{color:var(--mast-ink)}
+.nav .themetog{color:var(--mast-ink);border-color:color-mix(in srgb,var(--mast-ink) 45%,transparent)}
+.nav .btn-sun,.nav .btn-sun:hover{background:var(--mast-ink);color:var(--mast)}
+.foot{border-top:1px solid var(--rule)}
+
+/* 4. main buttons: thin gold line inside the edge */
+.btn-sun{outline:1px solid var(--btn-edge);outline-offset:-5px}
+.btn-sun.small{outline-offset:-4px}
+
+/* 7. card titles: spaced serif capitals instead of Anton */
+.demo-out h3,.how-steps h3,.t-big h3,.t-sun h3{font-family:var(--serif);font-weight:500;text-transform:uppercase;letter-spacing:.08em;line-height:1.15}
+.demo-out h3{font-size:20px}
+.how-steps h3{font-size:clamp(20px,2vw,28px)}
+.t-big h3{font-size:28px}
+.t-sun h3{font-size:24px}
+
+/* photos: darken with plain black in dark mode, no maroon tint */
+.demo-shade{background:
+    linear-gradient(90deg,color-mix(in srgb,var(--shade) 25%,transparent),color-mix(in srgb,var(--shade) 70%,transparent)),
+    linear-gradient(0deg,color-mix(in srgb,var(--shade) 90%,transparent),transparent 45%),
+    color-mix(in oklab,rgba(70,120,200,.35),rgba(255,150,40,.35) calc(var(--warm)*100%))}
+.tile::after{background:linear-gradient(0deg,color-mix(in srgb,var(--shade) 95%,transparent) 10%,color-mix(in srgb,var(--shade) 35%,transparent) 55%,color-mix(in srgb,var(--shade) 10%,transparent))}
+.final-bg{background:linear-gradient(color-mix(in srgb,var(--shade) 72%,transparent),color-mix(in srgb,var(--shade) 88%,transparent)),url(https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=70) center/cover}
