@@ -607,3 +607,15 @@ body.noscroll{overflow:hidden}
 .aibtn:disabled{opacity:.7;cursor:progress}
 .ainote p{background:color-mix(in srgb,var(--sun) 8%,transparent);border-left:3px solid var(--terracotta);border-radius:0 12px 12px 0;padding:10px 14px;font-size:15px;line-height:1.5;animation:stepIn .4s ease both}
 .ainote p b{display:block;color:var(--terracotta);font-size:12px;margin-bottom:2px}
+
+/* light / dark switch */
+.themetog{display:grid;place-items:center;width:38px;height:38px;flex:none;border:1px solid var(--line);background:transparent;color:inherit;border-radius:50%;cursor:pointer;padding:0;transition:border-color .15s}
+.themetog:hover{border-color:currentColor}
+.themetog svg{width:18px;height:18px}
+.themetog .i-sun{display:none}
+:root[data-theme="dark"] .themetog .i-moon{display:none}
+:root[data-theme="dark"] .themetog .i-sun{display:block}
+@media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .themetog .i-moon{display:none}
+    :root:not([data-theme="light"]) .themetog .i-sun{display:block}
+}
